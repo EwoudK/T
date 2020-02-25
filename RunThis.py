@@ -1,4 +1,3 @@
-import Tree as Tree
 import Actor as Actor
 import System as System
 
