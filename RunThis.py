@@ -10,7 +10,6 @@ Start = System.System([1, 1, 1])
 England.make_tree(Start)
 Spain.make_tree(Start)
 France.make_tree(Start)
-
 print(England.tree)
 
 print('done')
