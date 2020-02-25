@@ -10,6 +10,6 @@ Start = System.System([1, 1, 1])
 France.make_tree(Start)
 England.make_tree(Start)
 
-England.find_highest_gain()
+print(England.tree)
 
 print('done')

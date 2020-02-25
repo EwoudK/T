@@ -57,11 +57,11 @@ class Tree:
 
         self.toJson('data')
 
-        webbrowser.open('http://localhost:63342/Tree/plot.html?_ijt=9lbcpp74u54mul1g3lkksto8rc')
+        webbrowser.open('http://localhost:63342/HolyGuacomolyRecipy/Data/Tree.html?_ijt=nkod4jghvejfq84st6375snk7f')
 
         return ''
 
     def toJson(self, name):
 
-        with open('{}.json'.format(name), 'w') as fp:
+        with open('Data/{}.json'.format(name), 'w') as fp:
             json.dump(self.start, fp=fp, default=lambda x: x.toJson(), sort_keys=True, indent=4)
