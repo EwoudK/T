@@ -1,8 +1,4 @@
 import numpy as np
-import matplotlib.pyplot as plt
-
-plt.style.use('fivethirtyeight')
-kleur = plt.rcParams['axes.prop_cycle'].by_key()['color']
 
 Propensities = np.array([[0, -1, -2], [-1, 0, -3], [-2, -3, 0]])
 
