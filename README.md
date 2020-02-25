@@ -1,1 +1,1 @@
-# Holy Guacamoly recipe
+# Holy Guacamoly recipy
