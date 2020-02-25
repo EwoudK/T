@@ -57,7 +57,7 @@ class Tree:
 
         self.toJson('data')
 
-        webbrowser.open('http://localhost:63342/HolyGuacomolyRecipy/Data/Tree.html?_ijt=nkod4jghvejfq84st6375snk7f')
+        webbrowser.open('http://localhost:63342/HolyGuacomolyRecipy/Data/Tree.html?_ijt=bjorkm50chacd96tsgdjve15uu')
 
         return ''
 
