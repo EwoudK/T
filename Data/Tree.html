@@ -91,35 +91,10 @@
             .attr("class", "node")
             .attr("transform", function(d) { return "translate(" + source.y0 + "," + source.x0 + ")"; })
             .on("click", click);
-    //
-    // nodeEnter.append("rect")
-    //           .attr("width", 20)
-    //           .attr("height", 20)
-    //           .attr("x", -12.5)
-    //           .attr("y", -10)
-    //           .style("fill", function (d) {
-    //             return d.config[0] < 0 ? "#008fd5" : "#fc4f30";
-    //           });
-    // nodeEnter.append("rect")
-    //           .attr("width", 20)
-    //           .attr("height", 20)
-    //           .attr("x", -12.5 + 22.5)
-    //           .attr("y", -10)
-    //           .style("fill", function (d) {
-    //             return d.config[1] < 0 ? "#008fd5" : "#fc4f30";
-    //           });
-    // nodeEnter.append("rect")
-    //           .attr("width", 20)
-    //           .attr("height", 20)
-    //           .attr("x", -12.5 + 2*22.5)
-    //           .attr("y", -10)
-    //           .style("fill", function (d) {
-    //             return d.config[2] < 0 ? "#008fd5" : "#fc4f30";
-    //           });
 
     var k = 0;
 
-    for (k = 0; k < 3; k++) {
+    for (k = 0; k < 4; k++) {
       nodeEnter.append("rect")
               .attr("width", 20)
               .attr("height", 20)
