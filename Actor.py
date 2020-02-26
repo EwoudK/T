@@ -62,16 +62,33 @@ class Actor:
             depth = self.rationality-1
 
         layer = self.tree.layers[depth]
+
+        local_gain = 0
+        way_to_go = None
+
         for sub_layer in layer:
             sorted_layer = sorted(sub_layer.tolist(), key=lambda x: x.gain[self.index], reverse=True)
-            print(sorted_layer[0])
+            degenerate_configs = extract(self, sorted_layer)
+            path_gain, choice = path_integral(self, degenerate_configs[0], len(degenerate_configs))
+            if path_gain > local_gain:
+                local_gain = path_gain
+            way_to_go = choice
+
+        return way_to_go
+
+    def make_choice(self):
+
+        choice = self.find_highest_gain()
+        if choice[self.index] != self.tree.start[self.index]:
+            print('flip')
+        else:
+            print('no flip')
 
 
 England = Actor('England', 0, -1)
 Spain = Actor('Spain', 1, -1)
 France = Actor('France', 2, -1)
-Belgium = Actor('Belgium', 3, -1)
-Actors = [England, Spain, France, Belgium]
+Actors = [England, Spain, France]
 
 
 def filter_tree(config_set):
@@ -86,8 +103,17 @@ def compare(x, actor):
     return x.gain[actor.index]
 
 
-def extract(layer):
-    pass
+def extract(actor, sorted_layer):
+
+    degenerate_configs = [sorted_layer[0]]
+    for elem in sorted_layer[1:]:
+        if elem.gain[actor.index] != sorted_layer[0].gain[actor.index]:
+            break
+
+        else:
+            degenerate_configs.append(elem)
+
+    return degenerate_configs
 
 
 def make_tree_layer(start, actor_to_start, actors=Actors):
@@ -124,3 +150,16 @@ def make_tree_layer(start, actor_to_start, actors=Actors):
     temp_config_nodes = temp_config_nodes.flatten()
 
     return temp_config_nodes
+
+
+def path_integral(actor, leaf, degeneracy_leaf):
+
+    choice = None
+    total_gain = degeneracy_leaf*leaf.gain[actor.index]
+    while leaf.parent is not None:
+        total_gain += leaf.parent.gain[actor.index]
+        leaf = leaf.parent
+        if leaf.parent is not None:
+            choice = leaf
+
+    return total_gain, choice

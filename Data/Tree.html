@@ -92,9 +92,9 @@
             .attr("transform", function(d) { return "translate(" + source.y0 + "," + source.x0 + ")"; })
             .on("click", click);
 
-    var k = 0;
+    let max_k = source.gain.length;
 
-    for (k = 0; k < 4; k++) {
+    for (var k = 0; k < max_k; k++) {
       nodeEnter.append("rect")
               .attr("width", 20)
               .attr("height", 20)
