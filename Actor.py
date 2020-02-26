@@ -43,7 +43,7 @@ class Actor:
             new_layer = np.zeros((prev_layer.size, 2 * start_copy.Dim), dtype=object)
 
             for k, config in enumerate(prev_layer):
-                partial_layer = Tree.make_tree_layer(config, actor_to_start=self)
+                partial_layer = make_tree_layer(config, actor_to_start=self)
                 new_layer[k][:] = partial_layer
 
             prev_layer = new_layer.flatten()
