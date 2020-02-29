@@ -21,7 +21,7 @@ class Actor:
         elif type(other) == Actor:
             return self.index == other.index
 
-    def make_tree(self, start_config):
+    def construct_tree(self, start_config):
 
         start_config_copy = np.copy(start_config.config)
         start_copy = System(start_config_copy)
@@ -52,57 +52,72 @@ class Actor:
 
             filtered_configs = filter_tree(prev_layer)
 
-    def find_highest_gain(self):
+        self.tree.filtered = filtered_configs
+
+    def find_degeneracies(self):
 
         depth = 0
-
         if (self.rationality < 0) or (self.rationality > len(self.tree.layers)):
-            depth = len(self.tree.layers)-1
+            depth = len(self.tree.layers)
         elif self.rationality < len(self.tree.layers):
-            depth = self.rationality-1
+            depth = self.rationality
 
-        layer = self.tree.layers[depth]
+        degeneracy_books = [[{self.tree.start: 1}]]
+        for layer in self.tree.layers[1:depth]:
 
-        local_gain = 0
-        way_to_go = None
+            layer_list = []
+            for sub_layer in layer:
+                sorted_layer = sorted(sub_layer.tolist(), key=lambda x: x.gain[self.index], reverse=True)
+                config_degeneracies = count_degeneracy(self, sorted_layer)
+                layer_list.append(config_degeneracies)
+            degeneracy_books.append(layer_list)
 
-        for sub_layer in layer:
-            sorted_layer = sorted(sub_layer.tolist(), key=lambda x: x.gain[self.index], reverse=True)
-            degenerate_configs = degeneracy(self, sorted_layer)
-            path_gain, choice = path_integral(self, degenerate_configs[0], len(degenerate_configs))
-            if path_gain > local_gain:
-                local_gain = path_gain
-            way_to_go = choice
+        return degeneracy_books
 
-        return way_to_go
+    def path_integral(self):
 
-    def make_choice(self):
+        degeneracy_books = self.find_degeneracies()
+        layer = self.tree.layers[self.rationality].flatten()
 
-        choice = self.find_highest_gain()
-        if choice[self.index] != self.tree.start[self.index]:
-            print('flip')
-        else:
-            print('no flip')
+        row = len(layer)
+        col = len(self.tree.layers)-1
 
+        paths = np.zeros((row, col))
 
-def filter_tree(config_set):
+        for j, child in enumerate(layer):
+            index = -1
+            gain = 0
+            parent = child.parent
 
-    temp = list(config_set)
-    filtered = set(temp)
-    return filtered
+            j_temp = j // 6
 
+            while parent is not None:
 
-def degeneracy(actor, sorted_layer):
+                j_next = j_temp // 6
 
-    degenerate_configs = [sorted_layer[0]]
-    for elem in sorted_layer[1:]:
-        if elem.gain[actor.index] != sorted_layer[0].gain[actor.index]:
-            break
+                try:
+                    degeneracy_child = degeneracy_books[index][j_temp][child]
+                except KeyError:
+                    inverse = child.invert()
+                    degeneracy_child = degeneracy_books[index][j_temp][inverse]
 
-        else:
-            degenerate_configs.append(elem)
+                try:
+                    degeneracy_parent = degeneracy_books[index - 1][j_next][parent]
+                except KeyError:
+                    inverse = parent.invert()
+                    degeneracy_parent = degeneracy_books[index - 1][j_next][inverse]
 
-    return degenerate_configs
+                delta = child.gain[self.index] * degeneracy_child - parent.gain[self.index] * degeneracy_parent
+                print(child.gain[self.index], parent.gain[self.index], degeneracy_child, degeneracy_parent, delta)
+                paths[j][index] = delta
+
+                parent = parent.parent
+                index -= 1
+                j_temp //= 6
+
+                child = parent
+
+        # print(paths)
 
 
 def make_tree_layer(start, actor_to_start):
@@ -141,14 +156,34 @@ def make_tree_layer(start, actor_to_start):
     return temp_config_nodes
 
 
-def path_integral(actor, leaf, degeneracy_leaf):
+def filter_tree(config_set):
 
-    choice = None
-    total_gain = degeneracy_leaf*leaf.gain[actor.index]
-    while leaf.parent is not None:
-        total_gain += leaf.parent.gain[actor.index]
-        leaf = leaf.parent
-        if leaf.parent is not None:
-            choice = leaf
+    temp = list(config_set)
+    filtered = set(temp)
+    return filtered
 
-    return total_gain, choice
+
+def count_degeneracy(actor, layer):
+
+    config_count = {}
+
+    elem = layer[0]
+    count_j = 1
+
+    length = len(layer)
+
+    for i in range(1, length):
+        next_elem = layer[i]
+        if next_elem.gain[actor.index] != elem.gain[actor.index]:
+            config_count[elem] = count_j
+            count_j = 1
+            elem = next_elem
+            if i == length-1:
+                config_count[next_elem] = count_j
+
+        elif next_elem.gain[actor.index] == elem.gain[actor.index]:
+            count_j += 1
+            if i == length-1:
+                config_count[elem] = count_j
+
+    return config_count

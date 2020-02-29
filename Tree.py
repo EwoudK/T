@@ -8,12 +8,15 @@ class Tree:
 
         self.start = start
         self.layers = []
+        self.filtered = []
 
-    def __repr__(self):
+    def __repr__(self, plot=False):
 
         self.toJson('data')
 
-        webbrowser.open('http://localhost:63342/HolyGuacomolyRecipy/Data/Tree.html?_ijt=bjorkm50chacd96tsgdjve15uu')
+        if plot:
+
+            webbrowser.open('http://localhost:63342/HolyGuacomolyRecipy/Data/Tree.html?_ijt=bjorkm50chacd96tsgdjve15uu')
 
         return ''
 
