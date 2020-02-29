@@ -42,16 +42,16 @@
           width = 960 - margin.right - margin.left,
           height = 960 - margin.top - margin.bottom;
 
-  var i = 0,
-          duration = 150,
-          root;
+  let i = 0;
+  const duration = 150;
+  let root;
 
-  var tree = d3.layout.tree().size([height, width]);
+  const tree = d3.layout.tree().size([height, width]);
 
-  var diagonal = d3.svg.diagonal()
+  const diagonal = d3.svg.diagonal()
           .projection(function(d) { return [d.y, d.x]; });
 
-  var svg = d3.select("body").append("svg")
+  const svg = d3.select("body").append("svg")
           .attr("width", width + margin.right + margin.left)
           .attr("height", height + margin.top + margin.bottom)
           .append("g")
@@ -76,25 +76,25 @@
   function update(source) {
 
     // Compute the new tree layout.
-    var nodes = tree.nodes(root).reverse(),
+    const nodes = tree.nodes(root).reverse(),
             links = tree.links(nodes);
 
     // Normalize for fixed-depth.
     nodes.forEach(function(d) { d.y = d.depth * 180; });
 
     // Update the nodes…
-    var node = svg.selectAll("g.node")
+    const node = svg.selectAll("g.node")
             .data(nodes, function(d) { return d.id || (d.id = ++i); });
 
     // Enter any new nodes at the parent's previous position.
-    var nodeEnter = node.enter().append("g")
+    const nodeEnter = node.enter().append("g")
             .attr("class", "node")
             .attr("transform", function(d) { return "translate(" + source.y0 + "," + source.x0 + ")"; })
             .on("click", click);
 
     let max_k = source.gain.length;
 
-    for (var k = 0; k < max_k; k++) {
+    for (let k = 0; k < max_k; k++) {
       nodeEnter.append("rect")
               .attr("width", 20)
               .attr("height", 20)
@@ -109,7 +109,6 @@
 
                 d3.select('#hover').text('Gain: ' + d.gain).style({opacity:'1.0'});
               })
-
               .on('mouseout', function(d){
                 d3.select(this).style({opacity:'1.0',});
                 d3.select("#hover").text('Gain.').style({opacity:'1.0'})
@@ -117,7 +116,7 @@
     }
 
     // Transition nodes to their new position.
-    var nodeUpdate = node.transition()
+    const nodeUpdate = node.transition()
             .duration(duration)
             .attr("transform", function(d) { return "translate(" + d.y + "," + d.x + ")"; });
 
@@ -125,7 +124,7 @@
             .style("fill-opacity", 1);
 
     // Transition exiting nodes to the parent's new position.
-    var nodeExit = node.exit().transition()
+    const nodeExit = node.exit().transition()
             .duration(duration)
             .attr("transform", function(d) { return "translate(" + source.y + "," + source.x + ")"; })
             .remove();
@@ -139,7 +138,7 @@
             .style("fill-opacity", 1e-6);
 
     // Update the links…
-    var link = svg.selectAll("path.link")
+    const link = svg.selectAll("path.link")
             .data(links, function(d) { return d.target.id; });
 
     // Enter any new links at the parent's previous position.

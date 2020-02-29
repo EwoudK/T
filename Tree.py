@@ -1,8 +1,5 @@
 import json
 import webbrowser
-import numpy as np
-from System import System
-from Actor import Actor
 
 
 class Tree:

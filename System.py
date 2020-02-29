@@ -1,6 +1,7 @@
 import numpy as np
 
-Propensities = np.array([[0, -1, -2], [-1, 0, -3], [-2, -3, 0]])
+Propensities = np.array([[0, -1, -2, 1, -1], [-1, 0, -3, 1, -1], [-2, -3, 0, 1, -1], [1, -1, -2, 0, -1],
+                         [-1, 1, -3, 1, 0]])
 
 
 class System:
@@ -59,7 +60,12 @@ class System:
     def flip(self, actor):
 
         temp = np.copy(self.config)
-        temp[actor.index] *= -1
+
+        if type(actor) == int:
+            temp[actor] *= -1
+
+        else:
+            temp[actor.index] *= -1
 
         new_config = System(temp)
 

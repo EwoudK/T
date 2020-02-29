@@ -68,7 +68,7 @@ class Actor:
 
         for sub_layer in layer:
             sorted_layer = sorted(sub_layer.tolist(), key=lambda x: x.gain[self.index], reverse=True)
-            degenerate_configs = extract(self, sorted_layer)
+            degenerate_configs = degeneracy(self, sorted_layer)
             path_gain, choice = path_integral(self, degenerate_configs[0], len(degenerate_configs))
             if path_gain > local_gain:
                 local_gain = path_gain
@@ -85,12 +85,6 @@ class Actor:
             print('no flip')
 
 
-England = Actor('England', 0, -1)
-Spain = Actor('Spain', 1, -1)
-France = Actor('France', 2, -1)
-Actors = [England, Spain, France]
-
-
 def filter_tree(config_set):
 
     temp = list(config_set)
@@ -98,12 +92,7 @@ def filter_tree(config_set):
     return filtered
 
 
-def compare(x, actor):
-
-    return x.gain[actor.index]
-
-
-def extract(actor, sorted_layer):
+def degeneracy(actor, sorted_layer):
 
     degenerate_configs = [sorted_layer[0]]
     for elem in sorted_layer[1:]:
@@ -116,7 +105,7 @@ def extract(actor, sorted_layer):
     return degenerate_configs
 
 
-def make_tree_layer(start, actor_to_start, actors=Actors):
+def make_tree_layer(start, actor_to_start):
 
     flip = start.flip(actor_to_start)
 
@@ -135,11 +124,11 @@ def make_tree_layer(start, actor_to_start, actors=Actors):
         start.children[test_index] = copy
         test_index += 1
 
-        for other_actor in actors:
-            if other_actor != actor_to_start:
+        for index in range(start.Dim):
+            if index != actor_to_start:
                 j += 1
 
-                new_config = choice.flip(other_actor)
+                new_config = choice.flip(index)
                 new_config.parent = start
                 start.children[test_index] = new_config
 
