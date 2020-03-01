@@ -8,7 +8,6 @@ class Tree:
 
         self.start = start
         self.layers = []
-        self.filtered = []
 
     def __repr__(self, plot=False):
 

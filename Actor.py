@@ -74,51 +74,6 @@ class Actor:
 
         return degeneracy_books
 
-    def path_integral(self):
-
-        degeneracy_books = self.find_degeneracies()
-        layer = self.tree.layers[self.rationality].flatten()
-
-        row = len(layer)
-        col = len(self.tree.layers)-1
-
-        paths = np.zeros((row, col))
-
-        for j, child in enumerate(layer):
-            index = -1
-            gain = 0
-            parent = child.parent
-
-            j_temp = j // 6
-
-            while parent is not None:
-
-                j_next = j_temp // 6
-
-                try:
-                    degeneracy_child = degeneracy_books[index][j_temp][child]
-                except KeyError:
-                    inverse = child.invert()
-                    degeneracy_child = degeneracy_books[index][j_temp][inverse]
-
-                try:
-                    degeneracy_parent = degeneracy_books[index - 1][j_next][parent]
-                except KeyError:
-                    inverse = parent.invert()
-                    degeneracy_parent = degeneracy_books[index - 1][j_next][inverse]
-
-                delta = child.gain[self.index] * degeneracy_child - parent.gain[self.index] * degeneracy_parent
-                print(child.gain[self.index], parent.gain[self.index], degeneracy_child, degeneracy_parent, delta)
-                paths[j][index] = delta
-
-                parent = parent.parent
-                index -= 1
-                j_temp //= 6
-
-                child = parent
-
-        # print(paths)
-
 
 def make_tree_layer(start, actor_to_start):
 
@@ -175,15 +130,58 @@ def count_degeneracy(actor, layer):
     for i in range(1, length):
         next_elem = layer[i]
         if next_elem.gain[actor.index] != elem.gain[actor.index]:
-            config_count[elem] = count_j
+            config_count[elem.gain[actor.index]] = count_j
             count_j = 1
             elem = next_elem
             if i == length-1:
-                config_count[next_elem] = count_j
+                config_count[next_elem.gain[actor.index]] = count_j
 
         elif next_elem.gain[actor.index] == elem.gain[actor.index]:
             count_j += 1
             if i == length-1:
-                config_count[elem] = count_j
+                config_count[elem.gain[actor.index]] = count_j
 
     return config_count
+
+
+def path_integral(actor):
+
+    degeneracy_books = actor.find_degeneracies()
+
+    layer = actor.tree.layers[actor.rationality].flatten()
+    row = len(layer)
+    col = len(degeneracy_books) - 1
+    paths = np.zeros((row, col))
+
+    for j, child in enumerate(layer):
+
+        coeff = np.power(child.Dim, 2)
+        index = -1
+        j_temp = j // coeff
+
+        parent = child.parent
+        while parent is not None:
+
+            if len(degeneracy_books[index]) == 1:
+                degeneracy_child = 1
+
+            else:
+                degeneracy_child = degeneracy_books[index][j_temp][child.gain[actor.index]]
+
+            if len(degeneracy_books[index-1]) == 1:
+                degeneracy_parent = 1
+
+            else:
+                degeneracy_parent = degeneracy_books[index-1][j_temp//coeff][parent.gain[actor.index]]
+
+            delta = child.gain[actor.index]*degeneracy_child - parent.gain[actor.index]*degeneracy_parent
+            paths[j][index] = delta
+
+            index -= 1
+            j_temp //= coeff
+
+            child = parent
+            parent = child.parent
+
+    gain = paths.sum(axis=1)
+    return gain
