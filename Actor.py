@@ -183,5 +183,16 @@ def path_integral(actor):
             child = parent
             parent = child.parent
 
+    PathIntegral_to_csv(col, paths)
+
     gain = paths.sum(axis=1)
     return gain
+
+
+def PathIntegral_to_csv(col, paths):
+    string = ''
+    for i in range(col):
+        string += 'config{}, '.format(i)
+    string = string[:-2]
+
+    np.savetxt(fname='PathIntegralData/paths.csv', X=paths, header=string, comments='', fmt="%d", delimiter=",")

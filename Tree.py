@@ -13,13 +13,9 @@ class Tree:
 
         self.toJson('data')
 
-        if plot:
-
-            webbrowser.open('http://localhost:63342/HolyGuacomolyRecipy/Data/Tree.html?_ijt=bjorkm50chacd96tsgdjve15uu')
-
         return ''
 
     def toJson(self, name):
 
-        with open('Data/{}.json'.format(name), 'w') as fp:
+        with open('TreeData/{}.json'.format(name), 'w') as fp:
             json.dump(self.start, fp=fp, default=lambda x: x.toJson(), sort_keys=True, indent=4)
