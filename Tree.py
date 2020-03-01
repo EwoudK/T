@@ -1,5 +1,4 @@
 import json
-import webbrowser
 
 
 class Tree:
