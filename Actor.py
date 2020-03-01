@@ -54,26 +54,6 @@ class Actor:
 
         self.tree.filtered = filtered_configs
 
-    def find_degeneracies(self):
-
-        depth = 0
-        if (self.rationality < 0) or (self.rationality > len(self.tree.layers)):
-            depth = len(self.tree.layers)
-        elif self.rationality < len(self.tree.layers):
-            depth = self.rationality
-
-        degeneracy_books = [[{self.tree.start: 1}]]
-        for layer in self.tree.layers[1:depth]:
-
-            layer_list = []
-            for sub_layer in layer:
-                sorted_layer = sorted(sub_layer.tolist(), key=lambda x: x.gain[self.index], reverse=True)
-                config_degeneracies = count_degeneracy(self, sorted_layer)
-                layer_list.append(config_degeneracies)
-            degeneracy_books.append(layer_list)
-
-        return degeneracy_books
-
 
 def make_tree_layer(start, actor_to_start):
 
@@ -118,6 +98,27 @@ def filter_tree(config_set):
     return filtered
 
 
+def find_degeneracies(actor):
+
+    depth = 0
+    if (actor.rationality < 0) or (actor.rationality > len(actor.tree.layers)):
+        depth = len(actor.tree.layers)
+    elif actor.rationality < len(actor.tree.layers):
+        depth = actor.rationality
+
+    degeneracy_books = [[{actor.tree.start: 1}]]
+    for layer in actor.tree.layers[1:depth]:
+
+        layer_list = []
+        for sub_layer in layer:
+            sorted_layer = sorted(sub_layer.tolist(), key=lambda x: x.gain[actor.index], reverse=True)
+            config_degeneracies = count_degeneracy(actor, sorted_layer)
+            layer_list.append(config_degeneracies)
+        degeneracy_books.append(layer_list)
+
+    return degeneracy_books
+
+
 def count_degeneracy(actor, layer):
 
     config_count = {}
@@ -146,7 +147,7 @@ def count_degeneracy(actor, layer):
 
 def path_integral(actor):
 
-    degeneracy_books = actor.find_degeneracies()
+    degeneracy_books = find_degeneracies(actor)
 
     layer = actor.tree.layers[actor.rationality].flatten()
     row = len(layer)
@@ -192,7 +193,7 @@ def path_integral(actor):
 def PathIntegral_to_csv(col, paths):
     string = ''
     for i in range(col):
-        string += 'config{}, '.format(i)
+        string += 'delta{}, '.format(i)
     string = string[:-2]
 
     np.savetxt(fname='PathIntegralData/paths.csv', X=paths, header=string, comments='', fmt="%d", delimiter=",")
