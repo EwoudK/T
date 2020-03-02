@@ -152,7 +152,8 @@ def path_integral(actor):
     layer = actor.tree.layers[actor.rationality].flatten()
     row = len(layer)
     col = len(degeneracy_books) - 1
-    paths = np.zeros((row, col))
+    deltas = np.zeros((row, col))
+    paths = np.zeros((row, col+1))
 
     for j, child in enumerate(layer):
 
@@ -176,24 +177,28 @@ def path_integral(actor):
                 degeneracy_parent = degeneracy_books[index-1][j_temp//coeff][parent.gain[actor.index]]
 
             delta = child.gain[actor.index]*degeneracy_child - parent.gain[actor.index]*degeneracy_parent
-            paths[j][index] = delta
+            deltas[j][index] = delta
+
+            paths[j][index] = child.gain[actor.index]*degeneracy_child
 
             index -= 1
             j_temp //= coeff
 
             child = parent
             parent = child.parent
+            if parent is None:
+                paths[j][index] = child.gain[actor.index]
 
     PathIntegral_to_csv(col, paths)
 
-    gain = paths.sum(axis=1)
+    gain = deltas.sum(axis=1)
     return gain
 
 
 def PathIntegral_to_csv(col, paths):
     string = ''
-    for i in range(col):
-        string += 'delta{}, '.format(i)
+    for i in range(col+1):
+        string += 'config{}, '.format(i)
     string = string[:-2]
 
     np.savetxt(fname='PathIntegralData/paths.csv', X=paths, header=string, comments='', fmt="%d", delimiter=",")
