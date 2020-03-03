@@ -3,14 +3,16 @@ import json
 
 class Tree:
 
-    def __init__(self, start):
+    def __init__(self, start, name):
+
+        self.name = name
 
         self.start = start
         self.layers = []
 
-    def __repr__(self, plot=False):
+    def __repr__(self):
 
-        self.toJson('data')
+        self.toJson(self.name)
 
         return ''
 

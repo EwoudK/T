@@ -25,7 +25,7 @@ class Actor:
         start_config_copy = np.copy(start_config.config)
         start_copy = System(start_config_copy)
 
-        self.tree = Tree.Tree(start_copy)
+        self.tree = Tree.Tree(start_copy, self.name)
 
         num_config = np.power(2, start_copy.Dim)
 
@@ -52,6 +52,8 @@ class Actor:
             filtered_configs = filter_tree(prev_layer)
 
         self.tree.filtered = filtered_configs
+
+        print(self.tree)
 
     def decide(self, start_config, new_config):
 

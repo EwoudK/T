@@ -32,13 +32,22 @@
 </head>
 
 <body>
+
+<select id="mySelect" onchange="update_data()">
+  <option value="england.json" selected >England</option>
+  <option value="france.json">France</option>
+  <option value="spain.json">Spain</option>
+  <option value="prussia.json">Prussia</option>
+</select>
+
 <p id="hover">Gain.</p>
+
 <!-- load the d3.js library -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.min.js"></script>
 
 <script>
 
-  const margin = {top: 20, right: 120, bottom: 20, left: 120},
+  const margin = {top: 100, right: 120, bottom: 20, left: 120},
           width = 960 - margin.right - margin.left,
           height = 800 - margin.top - margin.bottom;
 
@@ -54,11 +63,12 @@
           .attr("width", width + margin.right + margin.left)
           .attr("height", height + margin.top + margin.bottom)
           .append("g")
-          .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+          .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
 
 
-
-  fetch('data.json').then(
+  function update_data() {
+  var datafile = document.getElementById("mySelect").value;
+  fetch(datafile).then(
           async (treeData) => {
             treeData = await treeData.json();
 
@@ -71,6 +81,7 @@
             d3.select(self.frameElement).style("height", "500px");
 
           });
+}
 
   function update(source) {
 
