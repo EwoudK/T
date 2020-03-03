@@ -14,7 +14,7 @@ actors = [England, Spain, France, Prussia]
 
 Start = System([1, 1, 1, 1])
 New = System([1, 1, 1, 1])
-for blank in range(3):
+for blank in range(6):
 
     New = System([1, 1, 1, 1])
     for actor in actors:
