@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
 
-  <title>Tree</title>
+  <title>Evolution</title>
 
   <style>
 
@@ -58,7 +58,7 @@
 
 
 
-  fetch('data.json').then(
+  fetch('config.json').then(
           async (treeData) => {
             treeData = await treeData.json();
 
@@ -75,8 +75,8 @@
   function update(source) {
 
     // Compute the new tree layout.
-    const nodes = tree.nodes(root).reverse(),
-            links = tree.links(nodes); console.log(nodes);
+    const nodes = tree.nodes(root).reverse();
+    const links = tree.links(nodes);
 
     // Normalize for fixed-depth.
     nodes.forEach(function(d) { d.y = d.depth * 180; });

@@ -1,4 +1,5 @@
 import numpy as np
+import json
 
 Propensities = np.array([[0, -1, -2, 1], [-1, 0, -3, 1], [-2, -3, 0, 1], [1, 1, 1, 0]])
 
@@ -94,3 +95,24 @@ class System:
                 'config': self.config.tolist(),
                 'gain': self.gain.tolist()
             }
+
+    def toJson_part_two(self):
+
+        if self.children is None:
+            return {
+                'config': self.config.tolist(),
+                'gain': self.gain.tolist()
+                    }
+        else:
+
+            return {
+                'children': [self.children.toJson_part_two()],
+                'config': self.config.tolist(),
+                'gain': self.gain.tolist()
+            }
+
+
+def config_to_Json(start, name='config'):
+
+    with open('ConfigEvolutionData/{}.json'.format(name), 'w') as fp:
+        json.dump(start, fp=fp, default=lambda x: x.toJson_part_two(), sort_keys=True, indent=4)

@@ -54,6 +54,18 @@ class Actor:
 
         self.tree.filtered = filtered_configs
 
+    def decide(self, start_config, new_config):
+
+        max_gain, max_index = path_integral(self)
+        config = self.tree.layers[-1].flatten()[max_index][0]
+        branch = move_up(config, start_config)
+
+        if branch[self.index] == start_config[self.index]:
+            new_config[self.index] = start_config[self.index]
+
+        else:
+            new_config[self.index] = branch[self.index]
+
 
 def make_tree_layer(start, actor_to_start):
 
@@ -152,6 +164,7 @@ def path_integral(actor):
     layer = actor.tree.layers[actor.rationality].flatten()
     row = len(layer)
     col = len(degeneracy_books) - 1
+
     deltas = np.zeros((row, col))
     paths = np.zeros((row, col+1))
 
@@ -179,7 +192,7 @@ def path_integral(actor):
             delta = child.gain[actor.index]*degeneracy_child - parent.gain[actor.index]*degeneracy_parent
             deltas[j][index] = delta
 
-            paths[j][index] = child.gain[actor.index]  # *degeneracy_child
+            paths[j][index] = child.gain[actor.index]
 
             index -= 1
             j_temp //= coeff
@@ -191,8 +204,14 @@ def path_integral(actor):
 
     PathIntegral_to_csv(col, paths)
 
-    gain = deltas.sum(axis=1)
-    return gain
+    max_config = paths[-1].max()
+    gain = np.array([x for i, x in enumerate(paths) if paths[i][-1] == max_config])
+    summed_gain = gain.sum(axis=1)
+
+    max_gain = gain.sum(axis=1).max()
+    max_index = np.where(summed_gain == max_gain)
+
+    return max_gain, max_index
 
 
 def PathIntegral_to_csv(col, paths):
@@ -202,3 +221,15 @@ def PathIntegral_to_csv(col, paths):
     string = string[:-2]
 
     np.savetxt(fname='PathIntegralData/paths.csv', X=paths, header=string, comments='', fmt="%d", delimiter=",")
+
+
+def move_up(config, start_config):
+
+    child = config
+    parent = child.parent
+
+    while not parent == start_config:
+        child = parent
+        parent = child.parent
+
+    return child
