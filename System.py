@@ -114,5 +114,5 @@ class System:
 
 def config_to_Json(start, name='config'):
 
-    with open('ConfigEvolutionData/{}.json'.format(name), 'w') as fp:
+    with open('EvolutionData/{}.json'.format(name), 'w') as fp:
         json.dump(start, fp=fp, default=lambda x: x.toJson_part_two(), sort_keys=True, indent=4)
