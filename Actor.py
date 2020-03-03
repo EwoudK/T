@@ -179,7 +179,7 @@ def path_integral(actor):
             delta = child.gain[actor.index]*degeneracy_child - parent.gain[actor.index]*degeneracy_parent
             deltas[j][index] = delta
 
-            paths[j][index] = child.gain[actor.index]*degeneracy_child
+            paths[j][index] = child.gain[actor.index]  # *degeneracy_child
 
             index -= 1
             j_temp //= coeff
