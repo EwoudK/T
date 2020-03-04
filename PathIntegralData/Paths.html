@@ -19,9 +19,9 @@ canvas, svg {
   position: relative;
 }
 
-.brush .extent {
+.brush .extent{
   fill-opacity: .3;
-  stroke: #fff;
+  stroke: #ffff;
   shape-rendering: crispEdges;
 }
 
@@ -82,22 +82,30 @@ background.strokeStyle = '#a0bbd4';
 
 function execute(name) {
 
-    const svg = d3.select("svg")
-              .attr("width", w + m[1] + m[3])
-              .attr("height", h + m[0] + m[2])
-              .append("svg:g")
-              .attr("transform", "translate(" + m[3] + "," + m[0] + ")");
+    d3.selectAll("svg > *").remove();
 
+    foreground.clearRect(0, 0, w + 1, h + 1);
+    background.clearRect(0, 0, w + 1, h + 1);
+
+
+    const svg = d3.select("svg")
+                  .attr("width", w + m[1] + m[3])
+                  .attr("height", h + m[0] + m[2])
+                  .append("svg:g")
+                  .attr("transform", "translate(" + m[3] + "," + m[0] + ")");
+
+    let counter = 0;
     d3.csv(name, function (cars) {
 
         // Extract the list of dimensions and create a scale for each.
         x.domain(dimensions = d3.keys(cars[0]).filter(function (d) {
             return d !== "name" && (y[d] = d3.scale.linear()
-                .domain(d3.extent(cars, function (p) {
-                    return +p[d];
-                }))
-                .range([h, 0]));
-        }));
+                                                   .domain(d3.extent(cars, function (p) {
+                                                       if (d==='config0' && counter === 0){counter += 1; return +p[d]+2}
+                                                       if (d==='config0' && counter === 1){return -(+p[d]+2)}
+                                                       return +p[d]; } ))
+                                                   .range([h, 10]));
+        } ));
 
         // Render full foreground and background
         cars.map(function (d) {
@@ -110,9 +118,7 @@ function execute(name) {
             .data(dimensions)
             .enter().append("svg:g")
             .attr("class", "dimension")
-            .attr("transform", function (d) {
-                return "translate(" + x(d) + ")";
-            });
+            .attr("transform", function (d) { return "translate(" + x(d) + ")"; });
 
         // Add an axis and title.
         g.append("svg:g")
@@ -159,7 +165,6 @@ function execute(name) {
             });
         }
     });
-    svg.selectAll().remove();
 
 }
 

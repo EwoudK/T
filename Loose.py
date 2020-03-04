@@ -140,12 +140,12 @@ def path_integral(actor):
 
     PathIntegral_to_csv(col, paths, actor.name)
 
-    max_config = paths[-1].max()
-    gain = np.array([x for i, x in enumerate(paths) if paths[i][-1] == max_config])
+    max_gain = paths[-1].max()
+    gain = np.array([x for i, x in enumerate(paths) if paths[i][-1] == max_gain])
     summed_gain = gain.sum(axis=1)
 
-    max_gain = gain.sum(axis=1).max()
-    max_index = np.where(summed_gain == max_gain)
+    max_path = np.random.choice(summed_gain)
+    max_index = np.random.choice(np.where(summed_gain == max_path)[0])
 
     return max_gain, max_index
 

@@ -10,13 +10,17 @@ class Tree:
         self.start = start
         self.layers = []
 
-    def __repr__(self):
+    # def __repr__(self, counter=1):
+    #
+    #     self.toJson(self.name, counter)
+    #
+    #     return ''
 
-        self.toJson(self.name)
+    def print(self, counter):
 
-        return ''
+        self.toJson(self.name, counter)
 
-    def toJson(self, name):
+    def toJson(self, name, counter):
 
-        with open('TreeData/Tree{}.json'.format(name), 'w') as fp:
+        with open('TreeData/{}/Tree{}.json'.format(name, counter), 'w') as fp:
             json.dump(self.start, fp=fp, default=lambda x: x.toJson(), sort_keys=True, indent=4)

@@ -20,7 +20,7 @@ class Actor:
         elif type(other) == Actor:
             return self.index == other.index
 
-    def construct_tree(self, start_config):
+    def construct_tree(self, start_config, counter=1):
 
         start_config_copy = np.copy(start_config.config)
         start_copy = System(start_config_copy)
@@ -53,12 +53,12 @@ class Actor:
 
         self.tree.filtered = filtered_configs
 
-        print(self.tree)
+        self.tree.print(counter)
 
     def decide(self, start_config, new_config):
 
         max_gain, max_index = path_integral(self)
-        config = self.tree.layers[-1].flatten()[max_index][0]
+        config = self.tree.layers[-1].flatten()[max_index]
         branch = move_up(config, start_config)
 
         if branch[self.index] == start_config[self.index]:
