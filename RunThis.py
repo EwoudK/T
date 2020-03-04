@@ -1,7 +1,8 @@
 import cProfile
 import numpy as np
 from Actor import Actor
-from System import System, config_to_Json
+from System import System
+from Loose import config_to_Json
 
 Propensities = np.array([[0, -1, -2, 1], [-1, 0, -3, 1], [-2, -3, 0, 1], [1, 1, 1, 0]])
 

@@ -33,11 +33,14 @@
 
 <body>
 
+<label for="mySelect">Choose a file:</label>
+
 <select id="mySelect" onchange="update_data()">
-  <option value="england.json" selected >England</option>
-  <option value="france.json">France</option>
-  <option value="spain.json">Spain</option>
-  <option value="prussia.json">Prussia</option>
+    <option value="" selected>Choose file</option>
+    <option value="TreeEngland.json" >England</option>
+    <option value="TreeFrance.json">France</option>
+    <option value="TreeSpain.json">Spain</option>
+    <option value="TreePrussia.json">Prussia</option>
 </select>
 
 <p id="hover">Gain.</p>
@@ -47,9 +50,9 @@
 
 <script>
 
-  const margin = {top: 100, right: 120, bottom: 20, left: 120},
-          width = 960 - margin.right - margin.left,
-          height = 800 - margin.top - margin.bottom;
+  const margin = {top: 100, right: 120, bottom: 20, left: 120};
+  const width = 960 - margin.right - margin.left;
+  const height = 800 - margin.top - margin.bottom;
 
   let i = 0;
   const duration = 150;
@@ -67,7 +70,7 @@
 
 
   function update_data() {
-  var datafile = document.getElementById("mySelect").value;
+  const datafile = document.getElementById("mySelect").value;
   fetch(datafile).then(
           async (treeData) => {
             treeData = await treeData.json();

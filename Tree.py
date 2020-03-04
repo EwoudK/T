@@ -18,5 +18,5 @@ class Tree:
 
     def toJson(self, name):
 
-        with open('TreeData/{}.json'.format(name), 'w') as fp:
+        with open('TreeData/Tree{}.json'.format(name), 'w') as fp:
             json.dump(self.start, fp=fp, default=lambda x: x.toJson(), sort_keys=True, indent=4)

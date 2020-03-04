@@ -1,3 +1,4 @@
+import json
 import numpy as np
 from System import System
 
@@ -137,7 +138,7 @@ def path_integral(actor):
             if parent is None:
                 paths[j][index] = child.gain[actor.index]
 
-    PathIntegral_to_csv(col, paths)
+    PathIntegral_to_csv(col, paths, actor.name)
 
     max_config = paths[-1].max()
     gain = np.array([x for i, x in enumerate(paths) if paths[i][-1] == max_config])
@@ -149,13 +150,13 @@ def path_integral(actor):
     return max_gain, max_index
 
 
-def PathIntegral_to_csv(col, paths):
+def PathIntegral_to_csv(col, paths, name):
     string = ''
     for i in range(col+1):
         string += 'config{}, '.format(i)
     string = string[:-2]
 
-    np.savetxt(fname='PathIntegralData/paths.csv', X=paths, header=string, comments='', fmt="%d", delimiter=",")
+    np.savetxt(fname='PathIntegralData/paths{}.csv'.format(name), X=paths, header=string, comments='', fmt="%d", delimiter=",")
 
 
 def move_up(config, start_config):
@@ -168,3 +169,9 @@ def move_up(config, start_config):
         parent = child.parent
 
     return child
+
+
+def config_to_Json(start, name='config'):
+
+    with open('EvolutionData/{}.json'.format(name), 'w') as fp:
+        json.dump(start, fp=fp, default=lambda x: x.toJson_part_two(), sort_keys=True, indent=4)

@@ -1,5 +1,4 @@
 import numpy as np
-import json
 
 Propensities = np.array([[0, -1, -2, 1], [-1, 0, -3, 1], [-2, -3, 0, 1], [1, 1, 1, 0]])
 
@@ -110,9 +109,3 @@ class System:
                 'config': self.config.tolist(),
                 'gain': self.gain.tolist()
             }
-
-
-def config_to_Json(start, name='config'):
-
-    with open('EvolutionData/{}.json'.format(name), 'w') as fp:
-        json.dump(start, fp=fp, default=lambda x: x.toJson_part_two(), sort_keys=True, indent=4)
