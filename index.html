@@ -1,0 +1,58 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Thesis by eketele</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/github-light.css">
+    <meta name="viewport" content="width=device-width">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>Thesis</h1>
+        <p></p>
+
+        <p class="view"><a href="https://github.ugent.be/eketele/Thesis">View the Project on GitHub <small>eketele/Thesis</small></a></p>
+
+
+      </header>
+      <section>
+        <h1>
+<a id="thesis-coalition-theory" class="anchor" href="#thesis-coalition-theory" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Thesis: Coalition theory</h1>
+<p>There are three visualisations for now. Evolution.html, PathIntegral.html, Tree.html.
+Evolution shows the evolution of the system from one configuration into a new one because of actors seeking to maximize their gain.
+Tree shows the rationality tree that is built for every actor in a certain step. The tree is built as follows:
+- actor for whom the tree is built can choose to stay in current configuration or flip its spin.
+- all the other actors flip their spin.
+- the configuration where the all other actors do not flip their spin is added as well.
+This gives 2*[(N-1) + 1] new configurations per rationality tree node.
+Red is for -1, Blue is for +1.
+The gain is calculated with the hamiltonian and propensities that can be found inside the file System.py
+For the propensities a symmetric matrix is built with the diagonal elements zero (no self interactions).</p>
+<p>Tree is able to show the rationality tree for every country for every step in the simulation by use of the selection menu.</p>
+<p>PathIntegral shows the decision process every actor makes to decide which path to take.
+Every actor wants to end in a configuration that maximizes its personal gain but also maximize its path to this configuration.</p>
+<p>One caveat, the current code does not detect unstable systems and will loop forever.
+This is not a hard fix but still needs to be implemented either way.</p>
+<p><a href="https://github.ugent.be/pages/eketele/Thesis/EvolutionData/Evolution.html">https://github.ugent.be/pages/eketele/Thesis/EvolutionData/Evolution.html</a>
+<img src="https://github.ugent.be/eketele/Thesis/blob/master/Plots/evolution.png" alt=""></p>
+<p><a href="https://github.ugent.be/pages/eketele/Thesis/PathIntegralData/Paths.html">https://github.ugent.be/pages/eketele/Thesis/PathIntegralData/Paths.html</a></p>
+<p><a href="https://github.ugent.be/pages/eketele/Thesis/TreeData/Tree.html">https://github.ugent.be/pages/eketele/Thesis/TreeData/Tree.html</a>
+<img src="https://github.ugent.be/eketele/Thesis/blob/master/Plots/tree.png" alt="">
+(for better understanding the Tree, nodes can be clicked upon to hide their children)</p>
+      </section>
+      <footer>
+        <p>This project is maintained by <a href="https://github.ugent.be/eketele">eketele</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+      </footer>
+    </div>
+    <script src="javascripts/scale.fix.js"></script>
+    
+  </body>
+</html>
