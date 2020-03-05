@@ -18,3 +18,8 @@ There are three visualisations for now. Evolution.html, PathIntegral.html, Tree.
    
 One caveat, the current code does not detect unstable systems and will loop forever.
 This is not a hard fix but still needs to be implemented either way.
+
+https://github.ugent.be/pages/eketele/Thesis/EvolutionData/Evolution.html
+https://github.ugent.be/pages/eketele/Thesis/PathIntegralData/Paths.html
+https://github.ugent.be/pages/eketele/Thesis/TreeData/Tree.html
+(for better understanding the Tree, nodes can be clicked upon to hide their children)
