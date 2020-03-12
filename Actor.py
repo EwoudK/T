@@ -12,6 +12,8 @@ class Actor:
 
         self.tree = None
 
+        self.highest = 0
+
     def __eq__(self, other):
 
         if type(other) == int:
@@ -58,10 +60,17 @@ class Actor:
     def decide(self, start_config, new_config):
 
         max_gain, max_index = path_integral(self)
+        if max_gain > self.highest:
+            self.highest = max_gain
+
         config = self.tree.layers[-1].flatten()[max_index]
         branch = move_up(config, start_config)
 
-        if branch[self.index] == start_config[self.index]:
+        if self.highest == start_config.gain[self.index]:
+            new_config[self.index] = start_config[self.index]
+            print('ja')
+
+        elif branch[self.index] == start_config[self.index]:
             new_config[self.index] = start_config[self.index]
 
         else:
