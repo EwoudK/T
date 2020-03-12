@@ -11,41 +11,47 @@ France = Actor('France', 1, -1)
 Spain = Actor('Spain', 2, -1)
 Prussia = Actor('Prussia', 3, -1)
 
-actors = [England, France, Spain, Prussia]
+Actors = [England, France, Spain, Prussia]
 
 Start = System([-1, 1, -1, 1])
-New = System([1, 1, 1, 1])
-local_optimum_counter = 0
-for blank in range(10):
 
-    New = System([1, 1, 1, 1])
-    for actor in actors:
 
-        actor.construct_tree(Start, blank)
-        actor.decide(Start, New)
+def unstable(start, actors):
+    local_optimum_counter = 0
 
-    New.gain = New.hamiltonian(Propensities)
+    for blank in range(20):
+        new = System([0, 0, 0, 0])
+        for actor in actors:
 
-    if New == Start:
-        local_optimum_counter += 1
+            actor.construct_tree(start, blank)
+            actor.decide(start, new)
 
-    if New == Start and local_optimum_counter > 1:
-        randie = np.random.choice(actors)
-        New = New.flip(randie)
-        local_optimum_counter = 0
-        print('forced flip')
+        new.gain = new.hamiltonian(Propensities)
 
-    New.parent = Start
-    Start.children = New
+        if new == start:
+            local_optimum_counter += 1
+        else:
+            local_optimum_counter = 0
 
-    Start = New
+        if local_optimum_counter > 3:
+            break
 
-child = New
-parent = child.parent
-while parent is not None:
-    child = parent
+        new.parent = start
+        start.children = new
+
+        start = new
+
+    child = start
     parent = child.parent
+    while parent is not None:
+        child = parent
+        parent = child.parent
+    config_to_Json(child)
 
-config_to_Json(child)
+    return start
+
+
+New = unstable(Start, Actors)
+print(New)
 
 print('done')
