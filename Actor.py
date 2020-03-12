@@ -57,6 +57,8 @@ class Actor:
 
         self.tree.print(counter)
 
+        return filtered_configs
+
     def decide(self, start_config, new_config):
 
         max_gain, max_index = path_integral(self)
@@ -68,7 +70,6 @@ class Actor:
 
         if self.highest == start_config.gain[self.index]:
             new_config[self.index] = start_config[self.index]
-            print('ja')
 
         elif branch[self.index] == start_config[self.index]:
             new_config[self.index] = start_config[self.index]

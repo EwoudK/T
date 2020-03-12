@@ -10,12 +10,6 @@ class Tree:
         self.start = start
         self.layers = []
 
-    # def __repr__(self, counter=1):
-    #
-    #     self.toJson(self.name, counter)
-    #
-    #     return ''
-
     def print(self, counter):
 
         self.toJson(self.name, counter)
