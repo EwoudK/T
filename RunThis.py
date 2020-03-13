@@ -1,27 +1,17 @@
 import cProfile
 import numpy as np
-from Actor import Actor
-from System import System
-from Loose import config_to_Json
 import matplotlib.pyplot as plt
+
+from Propensities import Propensities
+from Actor import Actors
+from System import System, Start
+from Loose import config_to_Json
 
 plt.style.use('fivethirtyeight')
 kleur = plt.rcParams['axes.prop_cycle'].by_key()['color']
 
-Propensities = np.array([[0, -1, -1, -1], [-1, 0, 1, 1], [-1, 1, 0, 1], [-1, 1, 1, 0]])
 
-England = Actor('England', 0, -1)
-France = Actor('France', 1, -1)
-Spain = Actor('Spain', 2, -1)
-Prussia = Actor('Prussia', 3, -1)
-
-Actors = [England, France, Spain, Prussia]
-
-Start = System([-1, 1, 1, 1])
-print(Start.gain)
-
-
-def unstable(start, actors):
+def Simulation(start, actors):
     local_optimum_counter = 0
     filtered = []
 
@@ -57,7 +47,7 @@ def unstable(start, actors):
     return start, filtered
 
 
-New, Filtered = unstable(Start, Actors)
+New, Filtered = Simulation(Start, Actors)
 
 gains = [config.gain for config in Filtered]
 summed_gains = [gain.sum() for gain in gains]
@@ -72,7 +62,7 @@ bin_max, bin_min = tmp.max(), tmp.min()
 bin_range = int(bin_max - bin_min)
 
 fig = plt.figure()
-plt.hist(verzameling[0], bins=bin_range, )
+plt.hist(verzameling[0], bins=bin_range)
 
 bin_max, bin_min = max(summed_gains), min(summed_gains)
 bin_range = int(bin_max - bin_min)
