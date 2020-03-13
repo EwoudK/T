@@ -5,7 +5,10 @@ from System import System
 from Loose import config_to_Json
 import matplotlib.pyplot as plt
 
-Propensities = np.array([[0, 1, 2, 1], [1, 0, 3, 1], [2, 3, 0, 1], [1, 1, 1, 0]])
+plt.style.use('fivethirtyeight')
+kleur = plt.rcParams['axes.prop_cycle'].by_key()['color']
+
+Propensities = np.array([[0, -1, -1, -1], [-1, 0, 1, 1], [-1, 1, 0, 1], [-1, 1, 1, 0]])
 
 England = Actor('England', 0, -1)
 France = Actor('France', 1, -1)
@@ -14,7 +17,8 @@ Prussia = Actor('Prussia', 3, -1)
 
 Actors = [England, France, Spain, Prussia]
 
-Start = System([-1, 1, -1, 1])
+Start = System([-1, 1, 1, 1])
+print(Start.gain)
 
 
 def unstable(start, actors):
@@ -59,12 +63,22 @@ gains = [config.gain for config in Filtered]
 summed_gains = [gain.sum() for gain in gains]
 
 gains = np.array(gains)
-gains = gains.flatten()
+tmp = gains.flatten()
+verzameling = []
+for i in range(4):
+    verzameling.append(gains[:, i])
 
-bin_max, bin_min = gains.max(), gains.min()
+bin_max, bin_min = tmp.max(), tmp.min()
 bin_range = int(bin_max - bin_min)
 
-plt.hist(gains, bins=bin_range)
+fig = plt.figure()
+plt.hist(verzameling[0], bins=bin_range, )
+
+bin_max, bin_min = max(summed_gains), min(summed_gains)
+bin_range = int(bin_max - bin_min)
+
+fig1 = plt.figure()
+plt.hist(summed_gains)
 plt.show()
 
 print('done')
