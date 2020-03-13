@@ -1,6 +1,5 @@
 import numpy as np
-
-Propensities = np.array([[0, -1, -1, -1], [-1, 0, 1, 1], [-1, 1, 0, 1], [-1, 1, 1, 0]])
+from Propensities import Propensities
 
 
 class System:
@@ -109,3 +108,6 @@ class System:
                 'config': self.config.tolist(),
                 'gain': self.gain.tolist()
             }
+
+
+Start = System([-1, 1, 1, 1])
