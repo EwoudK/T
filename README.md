@@ -1,7 +1,9 @@
 # Thesis: Coalition theory
 
 There are three visualisations for now. Evolution.html, PathIntegral.html, Tree.html.
+
     * Evolution shows the evolution of the system from one configuration into a new one because of actors seeking to maximize their gain.
+
     * Tree shows the rationality tree that is built for every actor in a certain step. The tree is built as follows:
         - actor for whom the tree is built can choose to stay in current configuration or flip its spin.
         - all the other actors flip their spin.
