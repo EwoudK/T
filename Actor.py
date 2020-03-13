@@ -1,5 +1,7 @@
 import Tree
-from Loose import *
+import numpy as np
+from System import System
+from Loose import path_integral, move_up, make_tree_layer, filter_tree
 
 
 class Actor:
@@ -76,3 +78,11 @@ class Actor:
 
         else:
             new_config[self.index] = branch[self.index]
+
+
+England = Actor('England', 0, -1)
+France = Actor('France', 1, -1)
+Spain = Actor('Spain', 2, -1)
+Prussia = Actor('Prussia', 3, -1)
+
+Actors = [England, France, Spain, Prussia]
