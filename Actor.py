@@ -1,4 +1,5 @@
 import Tree
+import json
 import numpy as np
 from System import System
 from Loose import path_integral, move_up, make_tree_layer, filter_tree
@@ -59,7 +60,7 @@ class Actor:
 
         self.tree.print(counter)
 
-        return filtered_configs
+        self.print_energy_degeneracy()
 
     def decide(self, start_config, new_config):
 
@@ -78,6 +79,28 @@ class Actor:
 
         else:
             new_config[self.index] = branch[self.index]
+
+    def print_energy_degeneracy(self):
+
+        filtered = self.tree.filtered
+
+        gains = np.array([config.gain.sum() for config in filtered])
+        np.savetxt('DegeneracyData/gainhist.csv', gains, header='gains', comments='', fmt="%d", delimiter=",")
+
+        individual_gains = np.array([config.gain[self.index] for config in filtered])
+        np.savetxt('DegeneracyData/gainhist{}.csv'.format(self.name), individual_gains, header='gains', comments='',
+                   fmt="%d", delimiter=",")
+
+        gain_dict = {}
+        for config in filtered:
+            gain = config.gain.sum()
+
+            if gain in gain_dict:
+                gain_dict[gain].append(config.config.tolist())
+            else:
+                gain_dict[gain] = [config.config.tolist()]
+        with open('DegeneracyData/gainstoconfigs.json', 'w') as fp:
+            json.dump(gain_dict, fp=fp, sort_keys=True, indent=4)
 
 
 England = Actor('England', 0, -1)
