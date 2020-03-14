@@ -13,13 +13,12 @@ kleur = plt.rcParams['axes.prop_cycle'].by_key()['color']
 
 def Simulation(start, actors):
     local_optimum_counter = 0
-    filtered = []
 
     for blank in range(20):
         new = System([0, 0, 0, 0])
         for actor in actors:
 
-            filtered = actor.construct_tree(start, blank)
+            actor.construct_tree(start, blank)
             actor.decide(start, new)
 
         new.gain = new.hamiltonian(Propensities)
@@ -44,31 +43,9 @@ def Simulation(start, actors):
         parent = child.parent
     config_to_Json(child)
 
-    return start, filtered
+    return start
 
 
-New, Filtered = Simulation(Start, Actors)
-
-gains = [config.gain for config in Filtered]
-summed_gains = [gain.sum() for gain in gains]
-
-gains = np.array(gains)
-tmp = gains.flatten()
-verzameling = []
-for i in range(4):
-    verzameling.append(gains[:, i])
-
-bin_max, bin_min = tmp.max(), tmp.min()
-bin_range = int(bin_max - bin_min)
-
-fig = plt.figure()
-plt.hist(verzameling[0], bins=bin_range)
-
-bin_max, bin_min = max(summed_gains), min(summed_gains)
-bin_range = int(bin_max - bin_min)
-
-fig1 = plt.figure()
-plt.hist(summed_gains)
-plt.show()
+New = Simulation(Start, Actors)
 
 print('done')
