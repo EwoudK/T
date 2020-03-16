@@ -102,6 +102,17 @@ class Actor:
         with open('DegeneracyData/gainstoconfigs.json', 'w') as fp:
             json.dump(gain_dict, fp=fp, sort_keys=True, indent=4)
 
+        individual_gain_dict = {}
+        for config in filtered:
+            individual_gain = config.gain[self.index]
+
+            if individual_gain in individual_gain_dict:
+                individual_gain_dict[individual_gain].append(config.config.tolist())
+            else:
+                individual_gain_dict[individual_gain] = [config.config.tolist()]
+        with open('DegeneracyData/gainstoconfigs{}.json'.format(self.name), 'w') as fp:
+            json.dump(individual_gain_dict, fp=fp, sort_keys=True, indent=4)
+
 
 England = Actor('England', 0, -1)
 France = Actor('France', 1, -1)
