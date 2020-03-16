@@ -86,7 +86,7 @@
     // Enter any new nodes at the parent's previous position.
     const nodeEnter = node.enter().append("g")
             .attr("class", "node")
-            .attr("transform", function(d) { return "translate(" + source.y0 + "," + source.x0 + ")"; })
+            .attr("transform", function() { return "translate(" + source.y0 + "," + source.x0 + ")"; })
             .on("click", click);
 
     let max_k = source.gain.length;
@@ -106,7 +106,7 @@
 
                 d3.select('#hover').text('Gain: ' + d.gain).style({opacity:'1.0'});
               })
-              .on('mouseout', function(d){
+              .on('mouseout', function(){
                 d3.select(this).style({opacity:'1.0',});
                 d3.select("#hover").text('Gain.').style({opacity:'1.0'})
               });
@@ -123,7 +123,7 @@
     // Transition exiting nodes to the parent's new position.
     const nodeExit = node.exit().transition()
                                 .duration(duration)
-                                .attr("transform", function(d) { return "translate(" + source.y + "," + source.x + ")"; })
+                                .attr("transform", function() { return "translate(" + source.y + "," + source.x + ")"; })
                                 .remove();
 
     nodeExit.select("rect")
@@ -141,7 +141,7 @@
     // Enter any new links at the parent's previous position.
     link.enter().insert("path", "g")
                 .attr("class", "link")
-                .attr("d", function(d) { const o = {x: source.x0, y: source.y0}; return diagonal({source: o, target: o}); });
+                .attr("d", function() { const o = {x: source.x0, y: source.y0}; return diagonal({source: o, target: o}); });
 
     // Transition links to their new position.
     link.transition()
@@ -151,7 +151,7 @@
     // Transition exiting nodes to the parent's new position.
     link.exit().transition()
                .duration(duration)
-               .attr("d", function(d) { const o = {x: source.x, y: source.y}; return diagonal({source: o, target: o}); })
+               .attr("d", function() { const o = {x: source.x, y: source.y}; return diagonal({source: o, target: o}); })
                .remove();
 
     // Stash the old positions for transition.
