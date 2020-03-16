@@ -80,7 +80,7 @@
             .attr("font-size", "20px")
             .attr("text-anchor", "end")
             .attr("fill", "black")
-            .text("Total gain (of the system)");
+            .text("Individual gain");
 
         // set the parameters for the histogram
         var histogram = d3.histogram()
@@ -95,20 +95,20 @@
         var y = d3.scaleLinear()
             .range([height, 0]);
 
-        y.domain([0, d3.max(bins, function(d) { return d.length; })]);   // d3.hist has to be called before the Y axis obviously
+        y.domain([0, d3.max(bins, function(d) { return d.length; })]);
 
         svg.append("g")
             .call(d3.axisLeft(y))
             .append("text")
             .attr("transform", "rotate(-90)")
-            .attr("y", 75)
+            .attr("y", 70)
             .attr("x", -50)
             .attr("font-family", 'futura')
             .attr("font-size", "20px")
             .attr("dy", "-5.1em")
             .attr("text-anchor", "end")
             .attr("fill", "black")
-            .text("Degeneracy of total gain");
+            .text("Degeneracy of individual gain");
 
         // append the bar rectangles to the svg element
         var rects = svg.selectAll("rect")
@@ -122,7 +122,7 @@
                        .style("fill", "#008fd4");
 
         var root;
-        fetch('gainstoconfigs.json').then( async (treeData) => { treeData = await treeData.json();
+        fetch('gainstoconfigsEngland.json').then( async (treeData) => { treeData = await treeData.json();
 
             root = treeData;
 
