@@ -99,7 +99,7 @@ class Actor:
                 gain_dict[gain].append(config.config.tolist())
             else:
                 gain_dict[gain] = [config.config.tolist()]
-        with open('DegeneracyData/gainstoconfigs.json', 'w') as fp:
+        with open('DegeneracyData/Total/gainstoconfigs.json', 'w') as fp:
             json.dump(gain_dict, fp=fp, sort_keys=True, indent=4)
 
         individual_gain_dict = {}
