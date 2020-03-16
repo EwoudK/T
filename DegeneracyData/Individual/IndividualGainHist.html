@@ -25,7 +25,7 @@
     const height = 700 - margin.top - margin.bottom;
 
     function show_configs(svg, gain, data) {
-        var l = 0;
+        let l = 0;
 
         svg.append("text")
                      .attr("x", 50)
@@ -35,10 +35,10 @@
                      .attr("fill", "black")
                      .text("Configurations with gain: " + gain);
 
-        for (var config in data){
-            var k = 0;
-            for(var actor in data[config]){
-                var spin = data[config][actor];
+        for ( const config in data){
+            let k = 0;
+            for( const actor in data[config]){
+                const spin = data[config][actor];
 
                 svg.append("rect")
                      .attr("width", 50)
@@ -62,14 +62,14 @@
 
         d3.selectAll("svg").remove();
 
-        var svg = d3.select("#Histogram")
+        const svg = d3.select("#Histogram")
             .append("svg")
             .attr("width", width + margin.left + margin.right)
             .attr("height", height + margin.top + margin.bottom)
             .append("g")
             .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-        var svg_1 = d3.select("#Histogram")
+        const svg_1 = d3.select("#Histogram")
             .append("svg")
             .attr("width", width + margin.left + margin.right)
             .attr("height", height + margin.top + margin.bottom)
@@ -79,8 +79,8 @@
         d3.csv("gainhist"+name+".csv", function (data) {
 
             // X axis: scale and draw:
-            var min = d3.min(data, function (d) { return +d.gains - 1 });
-            var max = d3.max(data, function (d) { return +d.gains + 1 });
+            const min = d3.min(data, function (d) { return +d.gains - 1 });
+            const max = d3.max(data, function (d) { return +d.gains + 1 });
             const x = d3.scaleLinear().domain([min, max]).range([0, width]);
 
             svg.append("g").attr("transform", "translate(0," + height + ")")
@@ -95,15 +95,15 @@
                 .text("Individual gain");
 
             // set the parameters for the histogram
-            var histogram = d3.histogram().value(function (d) { return d.gains; })
+            const histogram = d3.histogram().value(function (d) { return d.gains; })
                                           .domain(x.domain())
                                           .thresholds(x.ticks(max - min)); // then the numbers of bins
 
             // And apply this function to data to get the bins
-            var bins = histogram(data);
+            const bins = histogram(data);
 
             // Y axis: scale and draw:
-            var y = d3.scaleLinear().range([height, 0]);
+            const y = d3.scaleLinear().range([height, 0]);
 
             y.domain([0, d3.max(bins, function (d) { return d.length; })]);
 
@@ -121,7 +121,7 @@
                 .text("Degeneracy of individual gain");
 
             // append the bar rectangles to the svg element
-            var rects = svg.selectAll("rect")
+            const rects = svg.selectAll("rect")
                            .data(bins)
                            .enter()
                            .append("rect")
@@ -131,7 +131,7 @@
                            .attr("height", function (d) { return height - y(d.length); })
                            .style("fill", "#008fd4");
 
-            var root;
+            let root;
             fetch("gainstoconfigs"+name+".json").then(async (treeData) => {
                 treeData = await treeData.json();
 
@@ -139,16 +139,16 @@
 
             });
 
-            rects.on("mouseover", function (d) { var currentBar = d3.select(this);
+            rects.on("mouseover", function (d) { const currentBar = d3.select(this);
                                                      currentBar.style('fill', '#fc4f30');
-                                                 var config_list = root[String(d.x0) + ".0"];
+                                                 const config_list = root[String(d.x0) + ".0"];
 
                                                  clear_configs(svg_1);
                                                  show_configs(svg_1, d.x0, config_list);
 
                                                 });
 
-            rects.on("mouseout", function (d) { var currentBar = d3.select(this);
+            rects.on("mouseout", function () { const currentBar = d3.select(this);
                                                     currentBar.style('fill', '#008fd4');
                                               });
 
