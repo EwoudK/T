@@ -1,6 +1,16 @@
 <!DOCTYPE html>
 <meta charset="utf-8">
 
+  <label for="mySelect">Choose an actor for whom you want to see the gain-degeneracy:</label>
+
+  <select id="mySelect" onchange="execute(value)">
+      <option value="England" selected>Choose file</option>
+      <option value="England" >England</option>
+      <option value="France">France</option>
+      <option value="Spain">Spain</option>
+      <option value="Prussia">Prussia</option>
+  </select>
+
 <!-- Load d3.js -->
 <script src="https://d3js.org/d3.v4.js"></script>
 
@@ -10,29 +20,14 @@
 <script>
 
     // set the dimensions and margins of the graph
-    var margin = {top: 50, right: 50, bottom: 100, left: 50},
-        width = 700 - margin.left - margin.right,
-        height = 700 - margin.top - margin.bottom;
+    const margin = {top: 50, right: 50, bottom: 100, left: 50};
+    const width = 700 - margin.left - margin.right;
+    const height = 700 - margin.top - margin.bottom;
 
-    // append the svg object to the body of the page
-    var svg = d3.select("#Histogram")
-        .append("svg")
-        .attr("width", width + margin.left + margin.right)
-        .attr("height", height + margin.top + margin.bottom)
-        .append("g")
-        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-    var svg_1 = d3.select("#Histogram")
-        .append("svg")
-        .attr("width", width + margin.left + margin.right)
-        .attr("height", height + margin.top + margin.bottom)
-        .append("g")
-        .attr("transform", "translate(" + margin.right + "," + margin.bottom + ")");
-
-    function show_configs(gain, data) {
+    function show_configs(svg, gain, data) {
         var l = 0;
 
-        svg_1.append("text")
+        svg.append("text")
                      .attr("x", 50)
                      .attr("y", -10)
                      .attr("font-family", 'futura')
@@ -45,7 +40,7 @@
             for(var actor in data[config]){
                 var spin = data[config][actor];
 
-                svg_1.append("rect")
+                svg.append("rect")
                      .attr("width", 50)
                      .attr("height", 50)
                      .attr("x", k*55)
@@ -58,87 +53,106 @@
 
     }
 
-    function clear_configs(){
-       svg_1.selectAll("*").remove();
+    function clear_configs(svg){
+       svg.selectAll("*").remove();
 
     }
 
-    // get the data
-    d3.csv("gainhistEngland.csv", function(data) {
+    function execute(name) {
 
-        // X axis: scale and draw:
-        const x = d3.scaleLinear()
-            .domain([d3.min(data, function(d) { return +d.gains - 1}), d3.max(data, function(d) { return +d.gains + 1 })])
-            .range([0, width]);
+        d3.selectAll("svg").remove();
 
-        svg.append("g").attr("transform", "translate(0," + height + ")")
-            .call(d3.axisBottom(x))
-            .append("text")
-            .attr("y", 50)
-            .attr("x", 350)
-            .attr("font-family", 'futura')
-            .attr("font-size", "20px")
-            .attr("text-anchor", "end")
-            .attr("fill", "black")
-            .text("Individual gain");
+        var svg = d3.select("#Histogram")
+            .append("svg")
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom)
+            .append("g")
+            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-        // set the parameters for the histogram
-        var histogram = d3.histogram()
-            .value(function(d) { return d.gains; })   // I need to give the vector of value
-            .domain(x.domain())  // then the domain of the graphic
-            .thresholds(x.ticks(d3.max(data, function(d) { return +d.gains + 1 }) - d3.min(data, function(d) { return +d.gains - 1}) )); // then the numbers of bins
+        var svg_1 = d3.select("#Histogram")
+            .append("svg")
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom)
+            .append("g")
+            .attr("transform", "translate(" + margin.right + "," + margin.bottom + ")");
 
-        // And apply this function to data to get the bins
-        var bins = histogram(data);
+        d3.csv("gainhist"+name+".csv", function (data) {
 
-        // Y axis: scale and draw:
-        var y = d3.scaleLinear()
-            .range([height, 0]);
+            // X axis: scale and draw:
+            var min = d3.min(data, function (d) { return +d.gains - 1 });
+            var max = d3.max(data, function (d) { return +d.gains + 1 });
+            const x = d3.scaleLinear().domain([min, max]).range([0, width]);
 
-        y.domain([0, d3.max(bins, function(d) { return d.length; })]);
+            svg.append("g").attr("transform", "translate(0," + height + ")")
+                .call(d3.axisBottom(x))
+                .append("text")
+                .attr("y", 50)
+                .attr("x", 350)
+                .attr("font-family", 'futura')
+                .attr("font-size", "20px")
+                .attr("text-anchor", "end")
+                .attr("fill", "black")
+                .text("Individual gain");
 
-        svg.append("g")
-            .call(d3.axisLeft(y))
-            .append("text")
-            .attr("transform", "rotate(-90)")
-            .attr("y", 70)
-            .attr("x", -50)
-            .attr("font-family", 'futura')
-            .attr("font-size", "20px")
-            .attr("dy", "-5.1em")
-            .attr("text-anchor", "end")
-            .attr("fill", "black")
-            .text("Degeneracy of individual gain");
+            // set the parameters for the histogram
+            var histogram = d3.histogram().value(function (d) { return d.gains; })
+                                          .domain(x.domain())
+                                          .thresholds(x.ticks(max - min)); // then the numbers of bins
 
-        // append the bar rectangles to the svg element
-        var rects = svg.selectAll("rect")
-                       .data(bins)
-                       .enter()
-                       .append("rect")
-                       .attr("x", -10)
-                       .attr("transform", function(d) { return "translate(" + x(d.x0) + "," + y(d.length) + ")";})
-                       .attr("width",  20)
-                       .attr("height", function(d) { return height - y(d.length); })
-                       .style("fill", "#008fd4");
+            // And apply this function to data to get the bins
+            var bins = histogram(data);
 
-        var root;
-        fetch('gainstoconfigsEngland.json').then( async (treeData) => { treeData = await treeData.json();
+            // Y axis: scale and draw:
+            var y = d3.scaleLinear().range([height, 0]);
 
-            root = treeData;
+            y.domain([0, d3.max(bins, function (d) { return d.length; })]);
+
+            svg.append("g")
+                .call(d3.axisLeft(y))
+                .append("text")
+                .attr("transform", "rotate(-90)")
+                .attr("y", 70)
+                .attr("x", -50)
+                .attr("font-family", 'futura')
+                .attr("font-size", "20px")
+                .attr("dy", "-5.1em")
+                .attr("text-anchor", "end")
+                .attr("fill", "black")
+                .text("Degeneracy of individual gain");
+
+            // append the bar rectangles to the svg element
+            var rects = svg.selectAll("rect")
+                           .data(bins)
+                           .enter()
+                           .append("rect")
+                           .attr("x", -10)
+                           .attr("transform", function (d) { return "translate(" + x(d.x0) + "," + y(d.length) + ")"; })
+                           .attr("width", 20)
+                           .attr("height", function (d) { return height - y(d.length); })
+                           .style("fill", "#008fd4");
+
+            var root;
+            fetch("gainstoconfigs"+name+".json").then(async (treeData) => {
+                treeData = await treeData.json();
+
+                root = treeData;
+
+            });
+
+            rects.on("mouseover", function (d) { var currentBar = d3.select(this);
+                                                     currentBar.style('fill', '#fc4f30');
+                                                 var config_list = root[String(d.x0) + ".0"];
+
+                                                 clear_configs(svg_1);
+                                                 show_configs(svg_1, d.x0, config_list);
+
+                                                });
+
+            rects.on("mouseout", function (d) { var currentBar = d3.select(this);
+                                                    currentBar.style('fill', '#008fd4');
+                                              });
 
         });
-
-        rects.on("mouseover", function(d){ var currentBar = d3.select(this); currentBar.style('fill', '#fc4f30');
-                                           var config_list = root[String(d.x0)+".0"];
-
-                                           clear_configs();
-
-                                           show_configs(d.x0, config_list);
-
-                                            });
-
-        rects.on("mouseout", function(d){ var currentBar = d3.select(this); currentBar.style('fill', '#008fd4'); });
-
-    });
+    }
 
 </script>
