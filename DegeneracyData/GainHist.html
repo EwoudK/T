@@ -29,8 +29,17 @@
         .append("g")
         .attr("transform", "translate(" + margin.right + "," + margin.bottom + ")");
 
-    function show_configs(data) {
+    function show_configs(gain, data) {
         var l = 0;
+
+        svg_1.append("text")
+                     .attr("x", 50)
+                     .attr("y", -10)
+                     .attr("font-family", 'futura')
+                     .attr("font-size", "20px")
+                     .attr("fill", "black")
+                     .text("Configurations with gain: " + gain);
+
         for (var config in data){
             var k = 0;
             for(var actor in data[config]){
@@ -53,6 +62,7 @@
        svg_1.selectAll("*").remove();
 
     }
+
     // get the data
     d3.csv("gainhist.csv", function(data) {
 
@@ -66,10 +76,11 @@
             .append("text")
             .attr("y", 50)
             .attr("x", 350)
-            .attr("font-size", "24px")
+            .attr("font-family", 'futura')
+            .attr("font-size", "20px")
             .attr("text-anchor", "end")
             .attr("fill", "black")
-            .text("Gain of the system");
+            .text("Total gain (of the system)");
 
         // set the parameters for the histogram
         var histogram = d3.histogram()
@@ -90,13 +101,14 @@
             .call(d3.axisLeft(y))
             .append("text")
             .attr("transform", "rotate(-90)")
-            .attr("y", 100)
-            .attr("x", 5)
-            .attr("font-size", "24px")
+            .attr("y", 75)
+            .attr("x", -50)
+            .attr("font-family", 'futura')
+            .attr("font-size", "20px")
             .attr("dy", "-5.1em")
             .attr("text-anchor", "end")
             .attr("fill", "black")
-            .text("Degeneracy");
+            .text("Degeneracy of total gain");
 
         // append the bar rectangles to the svg element
         var rects = svg.selectAll("rect")
@@ -121,13 +133,11 @@
 
                                            clear_configs();
 
-                                           show_configs(config_list);
+                                           show_configs(d.x0, config_list);
 
                                             });
 
-        rects.on("mouseout", function(d){ var currentBar = d3.select(this); currentBar.style('fill', '#008fd4');
-
-                                            });
+        rects.on("mouseout", function(d){ var currentBar = d3.select(this); currentBar.style('fill', '#008fd4'); });
 
     });
 
