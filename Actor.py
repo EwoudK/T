@@ -85,10 +85,10 @@ class Actor:
         filtered = self.tree.filtered
 
         gains = np.array([config.gain.sum() for config in filtered])
-        np.savetxt('DegeneracyData/gainhist.csv', gains, header='gains', comments='', fmt="%d", delimiter=",")
+        np.savetxt('DegeneracyData/Total/gainhist.csv', gains, header='gains', comments='', fmt="%d", delimiter=",")
 
         individual_gains = np.array([config.gain[self.index] for config in filtered])
-        np.savetxt('DegeneracyData/gainhist{}.csv'.format(self.name), individual_gains, header='gains', comments='',
+        np.savetxt('DegeneracyData/Individual/gainhist{}.csv'.format(self.name), individual_gains, header='gains', comments='',
                    fmt="%d", delimiter=",")
 
         gain_dict = {}
@@ -110,7 +110,7 @@ class Actor:
                 individual_gain_dict[individual_gain].append(config.config.tolist())
             else:
                 individual_gain_dict[individual_gain] = [config.config.tolist()]
-        with open('DegeneracyData/gainstoconfigs{}.json'.format(self.name), 'w') as fp:
+        with open('DegeneracyData/Individual/gainstoconfigs{}.json'.format(self.name), 'w') as fp:
             json.dump(individual_gain_dict, fp=fp, sort_keys=True, indent=4)
 
 
