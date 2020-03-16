@@ -1,5 +1,5 @@
 
-<a href="about/contact-us">about</a>
+<a href="about/more_information">about the simulation</a>
 
 <a href="DegeneracyData/Total/GainHist.html">Total Gain Histogram</a>
 
