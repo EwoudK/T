@@ -10,19 +10,19 @@
 <script>
 
     // set the dimensions and margins of the graph
-    var margin = {top: 50, right: 50, bottom: 100, left: 50},
-        width = 700 - margin.left - margin.right,
-        height = 700 - margin.top - margin.bottom;
+    const margin = {top: 50, right: 50, bottom: 100, left: 50};
+    const width = 700 - margin.left - margin.right;
+    const height = 700 - margin.top - margin.bottom;
 
     // append the svg object to the body of the page
-    var svg = d3.select("#Histogram")
+    const svg = d3.select("#Histogram")
         .append("svg")
         .attr("width", width + margin.left + margin.right)
         .attr("height", height + margin.top + margin.bottom)
         .append("g")
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-    var svg_1 = d3.select("#Histogram")
+    const svg_1 = d3.select("#Histogram")
         .append("svg")
         .attr("width", width + margin.left + margin.right)
         .attr("height", height + margin.top + margin.bottom)
@@ -30,7 +30,7 @@
         .attr("transform", "translate(" + margin.right + "," + margin.bottom + ")");
 
     function show_configs(gain, data) {
-        var l = 0;
+        let l = 0;
 
         svg_1.append("text")
                      .attr("x", 50)
@@ -38,12 +38,12 @@
                      .attr("font-family", 'futura')
                      .attr("font-size", "20px")
                      .attr("fill", "black")
-                     .text("Configurations with gain: " + gain);
+                     .text("Configurations with gain = " + gain +":");
 
-        for (var config in data){
-            var k = 0;
-            for(var actor in data[config]){
-                var spin = data[config][actor];
+        for (const config in data){
+            let k = 0;
+            for(const actor in data[config]){
+                const spin = data[config][actor];
 
                 svg_1.append("rect")
                      .attr("width", 50)
@@ -63,12 +63,13 @@
 
     }
 
-    // get the data
     d3.csv("gainhist.csv", function(data) {
 
         // X axis: scale and draw:
+        const min = d3.min(data, function (d) { return +d.gains - 1 });
+        const max = d3.max(data, function (d) { return +d.gains + 1 });
         const x = d3.scaleLinear()
-            .domain([d3.min(data, function(d) { return +d.gains - 1}), d3.max(data, function(d) { return +d.gains + 1 })])
+            .domain([min, max])
             .range([0, width]);
 
         svg.append("g").attr("transform", "translate(0," + height + ")")
@@ -83,19 +84,19 @@
             .text("Total gain (of the system)");
 
         // set the parameters for the histogram
-        var histogram = d3.histogram()
-            .value(function(d) { return d.gains; })   // I need to give the vector of value
-            .domain(x.domain())  // then the domain of the graphic
-            .thresholds(x.ticks(d3.max(data, function(d) { return +d.gains + 1 }) - d3.min(data, function(d) { return +d.gains - 1}) )); // then the numbers of bins
+        const histogram = d3.histogram()
+            .value(function(d) { return d.gains; })
+            .domain(x.domain())
+            .thresholds(x.ticks(max - min));
 
         // And apply this function to data to get the bins
-        var bins = histogram(data);
+        const bins = histogram(data);
 
         // Y axis: scale and draw:
-        var y = d3.scaleLinear()
+        const y = d3.scaleLinear()
             .range([height, 0]);
 
-        y.domain([0, d3.max(bins, function(d) { return d.length; })]);   // d3.hist has to be called before the Y axis obviously
+        y.domain([0, d3.max(bins, function(d) { return d.length; })]);
 
         svg.append("g")
             .call(d3.axisLeft(y))
@@ -111,7 +112,7 @@
             .text("Degeneracy of total gain");
 
         // append the bar rectangles to the svg element
-        var rects = svg.selectAll("rect")
+        const rects = svg.selectAll("rect")
                        .data(bins)
                        .enter()
                        .append("rect")
@@ -121,23 +122,22 @@
                        .attr("height", function(d) { return height - y(d.length); })
                        .style("fill", "#008fd4");
 
-        var root;
+        let root;
         fetch('gainstoconfigs.json').then( async (treeData) => { treeData = await treeData.json();
 
             root = treeData;
 
         });
 
-        rects.on("mouseover", function(d){ var currentBar = d3.select(this); currentBar.style('fill', '#fc4f30');
-                                           var config_list = root[String(d.x0)+".0"];
+        rects.on("mouseover", function(d){ const currentBar = d3.select(this); currentBar.style('fill', '#fc4f30');
+                                           const config_list = root[String(d.x0)+".0"];
 
                                            clear_configs();
-
                                            show_configs(d.x0, config_list);
 
                                             });
 
-        rects.on("mouseout", function(d){ var currentBar = d3.select(this); currentBar.style('fill', '#008fd4'); });
+        rects.on("mouseout", function(){ const currentBar = d3.select(this); currentBar.style('fill', '#008fd4'); });
 
     });
 
