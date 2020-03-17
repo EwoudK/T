@@ -53,7 +53,9 @@ It will not flip its spin.
 #### Visualisation
 I am still working on a path integral visualisation that shows the degeneracy for each path.
 For now:
-There is a <a href="../PathIntegralData/Paths.html">visualisation</a> that shows the different paths (but not the degeneracy)
+There is a <a href="../PathIntegralData/Paths.html">visualisation</a> that shows the different paths
+(It is basically <a href="https://gmunu.files.wordpress.com/2008/01/pathintegral.gif">this</a> with x equal to the gain of a configuration and t equal to the "time" along the tree ie. how deep into the tree)
+However, it does not show the degeneracy of the paths.
 and there is a visualisation that shows the degeneracy for every different <a href="../DegeneracyData/Individual/IndividualGainHist.html">Individual Gain</a>
  and <a href="../DegeneracyData/Total/GainHist.html">Total Gain</a>.
 
