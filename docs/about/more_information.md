@@ -53,7 +53,7 @@ It will not flip its spin.
 #### Visualisation
 I am still working on a path integral visualisation that shows the degeneracy for each path.
 For now:
-There is a <a href="PathIntegralData/paths.html">visualisation</a> that shows the different paths (but not the degeneracy)
+There is a <a href="PathIntegralData/Paths.html">visualisation</a> that shows the different paths (but not the degeneracy)
 and there is a visualisation that shows the degeneracy for every different <a href="DegeneracyData/Individual/IndividualGainHist.html">Individual Gain</a>
  and <a href="DegeneracyData/Total/GainHist.html">Total Gain</a>.
 
