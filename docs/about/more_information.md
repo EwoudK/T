@@ -53,13 +53,13 @@ It will not flip its spin.
 #### Visualisation
 I am still working on a path integral visualisation that shows the degeneracy for each path.
 For now:
-There is a <a href="PathIntegralData/Paths.html">visualisation</a> that shows the different paths (but not the degeneracy)
-and there is a visualisation that shows the degeneracy for every different <a href="DegeneracyData/Individual/IndividualGainHist.html">Individual Gain</a>
- and <a href="DegeneracyData/Total/GainHist.html">Total Gain</a>.
+There is a <a href="../PathIntegralData/Paths.html">visualisation</a> that shows the different paths (but not the degeneracy)
+and there is a visualisation that shows the degeneracy for every different <a href="../DegeneracyData/Individual/IndividualGainHist.html">Individual Gain</a>
+ and <a href="../DegeneracyData/Total/GainHist.html">Total Gain</a>.
 
 ## End of the simulation
 If the system stays in the same configuration for more than tree loops,
 the simulation will assume that no actor can find a higher gain in another configuration and a stable configuration is found.
-The simulation will end. Now we can watch what happened in the <a href="EvolutionData/Evolution.html">Evolution of the system</a> visualisation
+The simulation will end. Now we can watch what happened in the <a href="../EvolutionData/Evolution.html">Evolution of the system</a> visualisation
 
 
