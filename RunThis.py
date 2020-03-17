@@ -13,12 +13,13 @@ kleur = plt.rcParams['axes.prop_cycle'].by_key()['color']
 
 def Simulation(start, actors):
     local_optimum_counter = 0
+    counter = 0
 
-    for blank in range(20):
+    while local_optimum_counter < 3:
         new = System([0, 0, 0, 0])
         for actor in actors:
 
-            actor.construct_tree(start, blank)
+            actor.construct_tree(start, counter)
             actor.decide(start, new)
 
         new.gain = new.hamiltonian(Propensities)
@@ -28,13 +29,12 @@ def Simulation(start, actors):
         else:
             local_optimum_counter = 0
 
-        if local_optimum_counter > 3:
-            break
-
         new.parent = start
         start.children = new
 
         start = new
+
+        counter += 1
 
     child = start
     parent = child.parent

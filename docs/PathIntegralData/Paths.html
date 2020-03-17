@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+    <title>Path Integral</title>
+    <style type="text/css">
+
+svg {
+  font: 15px sans-serif;
+}
+
+canvas, svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+#chart {
+  position: relative;
+}
+
+.brush .extent{
+  fill-opacity: .3;
+  stroke: #ffff;
+  shape-rendering: crispEdges;
+}
+
+.axis line, .axis path {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+.axis text {
+  text-shadow: 0 1px 0 #fff;
+}
+
+    </style>
+  </head>
+  <body>
+
+  <label for="mySelect">Choose a file:</label>
+
+  <select id="mySelect" onchange="execute(value)">
+      <option value="" >Choose file</option>
+      <option value="pathsEngland.csv" >England</option>
+      <option value="pathsFrance.csv">France</option>
+      <option value="pathsSpain.csv">Spain</option>
+      <option value="pathsPrussia.csv">Prussia</option>
+  </select>
+
+  <div id="chart">
+      <canvas id="background"></canvas>
+      <canvas id="foreground"></canvas>
+      <svg></svg>
+  </div>
+  <script type="text/javascript" src="https://mbostock.github.com/d3/d3.v2.js"></script>
+  <script type="text/javascript">
+
+const m = [30, 10, 10, 10];
+const w = 960 - m[1] - m[3];
+const h = 500 - m[0] - m[2];
+
+const x = d3.scale.ordinal().rangePoints([0, w], 1);
+const y = {};
+
+const line = d3.svg.line();
+const axis = d3.svg.axis().orient("left");
+let background;
+let foreground;
+
+d3.selectAll("canvas")
+    .attr("width", w + m[1] + m[3])
+    .attr("height", h + m[0] + m[2])
+    .style("padding", m.join("px ") + "px");
+
+foreground = document.getElementById('foreground').getContext('2d');
+background = document.getElementById('background').getContext('2d');
+
+foreground.strokeStyle = '#008fd4';
+background.strokeStyle = '#a0bbd4';
+
+function execute(name) {
+
+    d3.selectAll("svg > *").remove();
+
+    foreground.clearRect(0, 0, w + 1, h + 1);
+    background.clearRect(0, 0, w + 1, h + 1);
+
+
+    const svg = d3.select("svg")
+                  .attr("width", w + m[1] + m[3])
+                  .attr("height", h + m[0] + m[2])
+                  .append("svg:g")
+                  .attr("transform", "translate(" + m[3] + "," + m[0] + ")");
+
+    let counter = 0;
+    d3.csv(name, function (cars) {
+
+        // Extract the list of dimensions and create a scale for each.
+        x.domain(dimensions = d3.keys(cars[0]).filter(function (d) {
+            return d !== "name" && (y[d] = d3.scale.linear()
+                                                   .domain(d3.extent(cars, function (p) {
+                                                       if (d==='config0' && counter === 0){counter += 1; return +p[d]+2}
+                                                       if (d==='config0' && counter === 1){return -(+p[d]+2)}
+                                                       return +p[d]; } ))
+                                                   .range([h, 10]));
+        } ));
+
+        // Render full foreground and background
+        cars.map(function (d) {
+            path(d, background);
+            path(d, foreground);
+        });
+
+        // Add a group element for each dimension.
+        const g = svg.selectAll(".dimension")
+            .data(dimensions)
+            .enter().append("svg:g")
+            .attr("class", "dimension")
+            .attr("transform", function (d) { return "translate(" + x(d) + ")"; });
+
+        // Add an axis and title.
+        g.append("svg:g")
+            .attr("class", "axis")
+            .each(function (d) {
+                d3.select(this).call(axis.scale(y[d]));
+            })
+            .append("svg:text")
+            .attr("text-anchor", "middle")
+            .attr("y", -9)
+            .text(String);
+
+        // Add and store a brush for each axis.
+        g.append("svg:g")
+            .attr("class", "brush")
+            .each(function (d) {
+                d3.select(this).call(y[d].brush = d3.svg.brush().y(y[d]).on("brush", brush));
+            })
+            .selectAll("rect")
+            .attr("x", -8)
+            .attr("width", 16);
+
+        // Handles a brush event, toggling the display of foreground lines.
+        function brush() {
+            const actives = dimensions.filter(function (p) {
+                return !y[p].brush.empty();
+            });
+            const extents = actives.map(function (p) {
+                return y[p].brush.extent();
+            });
+
+            // Get lines within extents
+            const selected = [];
+            cars.map(function (d) {
+                return actives.every(function (p, i) {
+                    return extents[i][0] <= d[p] && d[p] <= extents[i][1];
+                }) ? selected.push(d) : null;
+            });
+
+            // Render selected lines
+            foreground.clearRect(0, 0, w + 1, h + 1);
+            selected.map(function (d) {
+                path(d, foreground);
+            });
+        }
+    });
+
+}
+
+function path(d, ctx) {
+  ctx.beginPath();
+  dimensions.map(function(p,i) {
+    if (i === 0) {
+      ctx.moveTo(x(p),y[p](d[p]));
+    } else {
+      ctx.lineTo(x(p),y[p](d[p]));
+    }
+  });
+  ctx.stroke();
+}
+
+    </script>
+  </body>
+</html>
