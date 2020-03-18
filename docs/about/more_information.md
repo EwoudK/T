@@ -1,7 +1,9 @@
 # CONCEPT
 
 The simulation consists of N different actors interacting with one another through the Hamiltonian.
-![](../Hamiltonian.png)
+
+<img src="../Hamiltonian.png" alt="test" height="235" width="600"/>
+
 Each actor goes and searches for a system configuration which has the highest individual gain.
 (This means the gain for the actor, not to be confused with the total gain of all the actors combined).
 
