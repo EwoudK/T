@@ -2,7 +2,7 @@ The current simulation consists of four actors (England, France, Spain, Prussia)
 England takes the roll of the pariah with negative propensities (-1) connecting it to the other actors.
 The other actors all have positive propensities (+1) with one another and a negative one (-1) with England.
 
-<img src="Sim_Sim.png" alt="Start" height="1240" width="1475"/>
+<img src="Sim_Sim.png" alt="Start" height="496.2" width="590.6"/>
 
 ### Note on the visualisations
 The system is visualised in the simulation as four coloured squares which represent England, France, Spain and Prussia (in that order):
