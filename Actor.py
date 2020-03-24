@@ -119,4 +119,4 @@ France = Actor('France', 1, -1)
 Spain = Actor('Spain', 2, -1)
 Prussia = Actor('Prussia', 3, -1)
 
-Actors = [England, France, Spain, Prussia]
+Actors = [England, France, Spain]

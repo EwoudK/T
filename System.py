@@ -110,4 +110,4 @@ class System:
             }
 
 
-Start = System([1, -1, 1, 1])
+Start = System([1, -1, 1])

@@ -15,7 +15,8 @@ def make_tree_layer(start, actor_to_start):
     for i, choice in enumerate(choice_nodes):
         j = 0
 
-        copy = System(choice.config)
+        copy = System(choice.config).invert()
+        copy[actor_to_start.index] *= -1
         copy.parent = start
 
         temp_config_nodes[i][j] = copy

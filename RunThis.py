@@ -16,7 +16,7 @@ def Simulation(start, actors):
     counter = 0
 
     while local_optimum_counter < 3:
-        new = System([0, 0, 0, 0])
+        new = System([0, 0, 0])
         for actor in actors:
 
             actor.construct_tree(start, counter)
