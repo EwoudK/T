@@ -1,6 +1,7 @@
 import json
 import numpy as np
 from System import System
+from Propensities import Propensities
 
 
 def make_tree_layer(start, actor_to_start):
@@ -16,7 +17,7 @@ def make_tree_layer(start, actor_to_start):
         j = 0
 
         copy = System(choice.config).invert()
-        copy[actor_to_start.index] *= -1
+        copy.flip(actor_to_start)
         copy.parent = start
 
         temp_config_nodes[i][j] = copy
@@ -141,14 +142,13 @@ def path_integral(actor):
 
     PathIntegral_to_csv(col, paths, actor.name)
 
-    max_gain = paths[-1].max()
-    gain = np.array([x for i, x in enumerate(paths) if paths[i][-1] == max_gain])
-    summed_gain = gain.sum(axis=1)
+    max_gain = paths[:, -1].max()
+    gain = np.array([x for i, x in enumerate(paths) if paths[:, -1][i] == max_gain])
 
-    max_path = np.random.choice(summed_gain)
-    max_index = np.random.choice(np.where(summed_gain == max_path)[0])
+    max_path = gain.sum(axis=1).max()
+    index = np.random.choice(np.where(paths.sum(axis=1) == max_path)[0])
 
-    return max_gain, max_index
+    return max_gain, index
 
 
 def PathIntegral_to_csv(col, paths, name):
@@ -176,3 +176,12 @@ def config_to_Json(start, name='config'):
 
     with open('EvolutionData/{}.json'.format(name), 'w') as fp:
         json.dump(start, fp=fp, default=lambda x: x.toJson_part_two(), sort_keys=True, indent=4)
+
+
+def write_evolution(start):
+    child = start
+    parent = child.parent
+    while parent is not None:
+        child = parent
+        parent = child.parent
+    config_to_Json(child)
