@@ -18,23 +18,23 @@ class Actor:
 
     def construct_tree(self, start_config, counter=1):
 
+        num_config = np.power(2, start_config.Dim)
+
         start_copy = start_config.copy()
         self.tree = Tree.Tree(start_copy, self.name)
 
-        num_config = np.power(2, start_copy.Dim)
-
         start_array = np.full(1, start_copy, dtype=object)
-
         prev_layer = start_array
+
         self.tree.layers.append(prev_layer)
 
         filtered_configs = set()
 
         while len(filtered_configs) != num_config:
 
-            new_layer = np.zeros((prev_layer.size, 2 * start_copy.Dim), dtype=object)
-
+            new_layer = np.zeros((prev_layer.size, 2*np.power(2, start_copy.Dim-1)), dtype=object)
             for k, config in enumerate(prev_layer):
+
                 partial_layer = make_tree_layer(config, actor_to_start=self)
                 new_layer[k][:] = partial_layer
 
