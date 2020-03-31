@@ -63,7 +63,7 @@
 
     }
 
-    d3.csv("gainhist.csv", function(data) {
+    d3.csv("DegeneracyData/Total/gainhist.csv", function(data) {
 
         // X axis: scale and draw:
         const min = d3.min(data, function (d) { return +d.gains - 1 });
@@ -123,7 +123,7 @@
                        .style("fill", "#008fd4");
 
         let root;
-        fetch('gainstoconfigs.json').then( async (treeData) => { treeData = await treeData.json();
+        fetch('DegeneracyData/Total/gainstoconfigs.json').then( async (treeData) => { treeData = await treeData.json();
 
             root = treeData;
 

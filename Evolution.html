@@ -56,7 +56,7 @@
           .append("g")
           .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-  fetch('config.json').then(
+  fetch('/EvolutionData/config.json').then(
           async (treeData) => {
             treeData = await treeData.json();
 
