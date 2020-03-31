@@ -10,6 +10,8 @@ class Tree:
         self.start = start
         self.layers = []
 
+        self.filtered = []
+
     def print(self, counter):
 
         self.toJson(self.name, counter)
