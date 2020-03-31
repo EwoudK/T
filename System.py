@@ -61,6 +61,12 @@ class System:
         temp = System(temp_config, self.actors)
         return temp
 
+    def evolute(self, other):
+        other = np.copy(other)
+        temp = System(other, self.actors)
+
+        return temp
+
     def invert(self):
 
         temp = self*-1
@@ -85,8 +91,10 @@ class System:
         for i, actor in enumerate(self.actors):
             temp = 0
             for j, other in enumerate(self.actors):
-                temp += 0.5*(self[i]*self[j]*(actor.propensities[j] + actor.belonging*other.belonging*10))
-                h[i] = temp
+                if i != j:
+                    temp += 0.5*(self[i]*self[j])*(actor.propensities[j] + actor.belonging*other.belonging*10)
+
+            h[i] = temp
 
         return h
 
