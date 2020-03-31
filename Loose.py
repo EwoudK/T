@@ -1,37 +1,28 @@
 import json
 import numpy as np
+from itertools import product
 
 
 def make_tree_layer(start, actor_to_start):
-    flip = start.flip(actor_to_start)
 
-    choice_nodes = [start, flip]
-    temp_config_nodes = np.zeros((2, start.Dim), dtype=object)
-    start.children = np.zeros(2 * start.Dim, dtype=object)
+    temp_config_nodes = np.zeros((2, np.power(2, start.Dim-1)), dtype=object)
+    start.children = np.zeros(2*np.power(2, start.Dim-1), dtype=object)
 
+    index = start.actors.index(actor_to_start)
+    choices = [1, -1]
     test_index = 0
-    for i, choice in enumerate(choice_nodes):
-        j = 0
+    for i, choice in enumerate(choices):
+        for j, element in enumerate(product([1, -1], repeat=start.Dim-1)):
+            almost_new_config = np.array(element)
+            new_config = np.insert(almost_new_config, index, choice)
 
-        copy = choice.copy().invert()
-        copy.flip(actor_to_start)
-        copy.parent = start
+            new_system = start.evolute(new_config)
 
-        temp_config_nodes[i][j] = copy
-        start.children[test_index] = copy
-        test_index += 1
+            new_system.parent = start
+            start.children[test_index] = new_system
+            test_index += 1
 
-        for actor in start.actors:
-            if actor != actor_to_start:
-                j += 1
-
-                new_config = choice.flip(actor)
-                new_config.parent = start
-                start.children[test_index] = new_config
-
-                test_index += 1
-
-                temp_config_nodes[i][j] = new_config
+            temp_config_nodes[i, j] = new_system
 
     temp_config_nodes = temp_config_nodes.flatten()
 
