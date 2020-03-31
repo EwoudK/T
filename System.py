@@ -1,21 +1,23 @@
 import numpy as np
-from Propensities import Propensities
+import json
 
 
 class System:
 
-    def __init__(self, config):
+    def __init__(self, config, actors):
 
         if type(config) == list:
             self.config = np.array(config)
         elif type(config) == np.ndarray:
             self.config = config
+
         self.Dim = self.config.size
+        self.actors = actors
 
         self.parent = None
         self.children = None
 
-        self.gain = self.hamiltonian(propensities=Propensities)
+        self.gain = self.hamiltonian()
 
     def __repr__(self):
 
@@ -29,14 +31,14 @@ class System:
     def __setitem__(self, key, value):
 
         self.config[key] = value
-        self.gain = self.hamiltonian(propensities=Propensities)
+        self.gain = self.hamiltonian()
 
     def __mul__(self, other):
 
         temp_config_array = np.copy(self.config)
         temp_config_array *= other
 
-        temp_system = System(temp_config_array)
+        temp_system = System(temp_config_array, self.actors)
         return temp_system
 
     def __rmul__(self, other):
@@ -44,7 +46,7 @@ class System:
         temp_config_array = np.copy(self.config)
         temp_config_array *= other
 
-        temp_system = System(temp_config_array)
+        temp_system = System(temp_config_array, self.actors)
         return temp_system
 
     def __eq__(self, other):
@@ -54,9 +56,13 @@ class System:
     def __hash__(self):
         return hash(self.config.tostring())
 
+    def copy(self):
+        temp_config = np.copy(self.config)
+        temp = System(temp_config, self.actors)
+        return temp
+
     def invert(self):
 
-        # temp = np.copy(self.config)
         temp = self*-1
 
         new_config = temp
@@ -66,25 +72,21 @@ class System:
     def flip(self, actor):
 
         temp_config_array = np.copy(self.config)
-        temp_system = System(temp_config_array)
+        temp_system = System(temp_config_array, self.actors)
+        index = self.actors.index(actor)
 
-        if type(actor) == int:
-            temp_system[actor] *= -1
-
-        else:
-            temp_system[actor.index] *= -1
+        temp_system[index] *= -1
 
         return temp_system
 
-    def hamiltonian(self, propensities):
+    def hamiltonian(self):
 
         h = np.zeros(self.Dim)
-
-        transpose = self.config.reshape((-1, 1))
-        for i in range(self.Dim):
-            temp = np.zeros(self.Dim)
-            temp[i] = self[i]
-            h[i] = temp.dot(propensities).dot(transpose)[0]
+        for i, actor in enumerate(self.actors):
+            temp = 0
+            for j, other in enumerate(self.actors):
+                temp += 0.5*(self[i]*self[j]*(actor.propensities[j] + actor.belonging*other.belonging*10))
+                h[i] = temp
 
         return h
 
@@ -116,5 +118,41 @@ class System:
                 'gain': self.gain.tolist()
             }
 
+    # noinspection PyTypeChecker
+    def print_energy_degeneracy(self):
 
-Start = System([1, 1, 1])
+        filtered = self.actors[0].tree.filtered
+
+        gains = np.array([config.gain.sum() for config in filtered])
+        np.savetxt('DegeneracyData/Total/gainhist.csv', gains, header='gains', comments='', fmt="%d", delimiter=",")
+
+        for i, actor in self.actors:
+            individual_gains = np.array([config.gain[i] for config in filtered])
+            np.savetxt('DegeneracyData/Individual/gainhist{}.csv'.format(actor.name), individual_gains, header='gains',
+                       comments='', fmt="%d", delimiter=",")
+
+        gain_dict = {}
+        for config in filtered:
+            gain = config.gain.sum()
+
+            if gain in gain_dict:
+                gain_dict[gain].append(config.config.tolist())
+            else:
+                gain_dict[gain] = [config.config.tolist()]
+
+        with open('DegeneracyData/Total/gainstoconfigs.json', 'w') as fp:
+            json.dump(gain_dict, fp=fp, sort_keys=True, indent=4)
+
+        individual_gain_dict = {}
+        for i, actor in self.actors:
+            for config in filtered:
+                individual_gain = config.gain[i]
+
+                if individual_gain in individual_gain_dict:
+                    individual_gain_dict[individual_gain].append(config.config.tolist())
+                else:
+                    individual_gain_dict[individual_gain] = [config.config.tolist()]
+
+            with open('DegeneracyData/Individual/gainstoconfigs{}.json'.format(actor.name), 'w') as fp:
+                json.dump(individual_gain_dict, fp=fp, sort_keys=True, indent=4)
+
