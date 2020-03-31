@@ -2,7 +2,6 @@ import cProfile
 import numpy as np
 import matplotlib.pyplot as plt
 
-from Propensities import Propensities
 from Actor import Actors
 from System import System, Start
 from Loose import write_evolution
@@ -22,8 +21,6 @@ def Simulation(start, actors):
 
             actor.construct_tree(start, counter)
             actor.decide(start, new)
-
-        # new.gain = new.hamiltonian(Propensities)
 
         if new == start:
             local_optimum_counter += 1

@@ -1,7 +1,6 @@
 import json
 import numpy as np
 from System import System
-from Propensities import Propensities
 
 
 def make_tree_layer(start, actor_to_start):
