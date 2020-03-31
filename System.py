@@ -6,7 +6,10 @@ class System:
 
     def __init__(self, config):
 
-        self.config = np.array(config)
+        if type(config) == list:
+            self.config = np.array(config)
+        elif type(config) == np.ndarray:
+            self.config = config
         self.Dim = self.config.size
 
         self.parent = None
@@ -26,18 +29,23 @@ class System:
     def __setitem__(self, key, value):
 
         self.config[key] = value
+        self.gain = self.hamiltonian(propensities=Propensities)
 
     def __mul__(self, other):
 
-        temp = np.copy(self.config)
-        temp *= other
-        return System(temp)
+        temp_config_array = np.copy(self.config)
+        temp_config_array *= other
+
+        temp_system = System(temp_config_array)
+        return temp_system
 
     def __rmul__(self, other):
 
-        temp = np.copy(self.config)
-        temp *= other
-        return System(temp)
+        temp_config_array = np.copy(self.config)
+        temp_config_array *= other
+
+        temp_system = System(temp_config_array)
+        return temp_system
 
     def __eq__(self, other):
 
@@ -48,26 +56,25 @@ class System:
 
     def invert(self):
 
-        temp = np.copy(self.config)
-        temp *= -1
+        # temp = np.copy(self.config)
+        temp = self*-1
 
-        new_config = System(temp)
+        new_config = temp
 
         return new_config
 
     def flip(self, actor):
 
-        temp = np.copy(self.config)
+        temp_config_array = np.copy(self.config)
+        temp_system = System(temp_config_array)
 
         if type(actor) == int:
-            temp[actor] *= -1
+            temp_system[actor] *= -1
 
         else:
-            temp[actor.index] *= -1
+            temp_system[actor.index] *= -1
 
-        new_config = System(temp)
-
-        return new_config
+        return temp_system
 
     def hamiltonian(self, propensities):
 
@@ -110,4 +117,4 @@ class System:
             }
 
 
-Start = System([1, -1, 1])
+Start = System([1, 1, 1])
