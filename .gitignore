@@ -4,10 +4,7 @@ __pycache__/
 .DS_Store
 /javascripts/
 /images/
-/DegeneracyData/Individual/
-/DegeneracyData/Total/
-/TreeData/DDR/
-/TreeData/France/
-/TreeData/UK/
-/TreeData/USA/
-/TreeData/USSR/
+/DegeneracyData/
+/TreeData/
+/EvolutionData/
+/PathIntegralData/
