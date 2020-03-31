@@ -1,26 +1,22 @@
 import cProfile
-import numpy as np
-import matplotlib.pyplot as plt
 
-from Actor import Actors
-from System import System, Start
+from StartingValues import Start
 from Loose import write_evolution
 
-plt.style.use('fivethirtyeight')
-kleur = plt.rcParams['axes.prop_cycle'].by_key()['color']
 
-
-def Simulation(start, actors):
+def Simulation(start):
     local_optimum_counter = 0
     counter = 0
 
     while local_optimum_counter < 10:
 
-        new = System(np.zeros(start.Dim))
-        for actor in actors:
-
-            actor.construct_tree(start, counter)
-            actor.decide(start, new)
+        new = start.copy()
+        for actor in start.actors:
+            print(actor)
+            if local_optimum_counter < 1:
+                actor.construct_tree(start, counter)
+            else:
+                actor.decide(start, new)
 
         if new == start:
             local_optimum_counter += 1
@@ -31,6 +27,7 @@ def Simulation(start, actors):
         start.children = new
 
         start = new
+        print(counter, start)
 
         counter += 1
 
@@ -43,14 +40,4 @@ def Simulation(start, actors):
     return start
 
 
-# New = Simulation(Start, Actors)
-Test = System(np.ones(Start.Dim))
-print(Test, Test.gain)
-NewTest = Test.invert()
-print(NewTest, NewTest.gain)
-NewTest = NewTest.flip(0)
-print(NewTest, NewTest.gain)
-NewTest = NewTest.flip(Actors[0])
-print(NewTest, NewTest.gain)
-NewTest[0] = 1
-print(NewTest, NewTest.gain)
+New = Simulation(Start)
