@@ -1,5 +1,4 @@
 import cProfile
-
 from StartingValues import Start
 from Loose import write_evolution
 
@@ -12,7 +11,6 @@ def Simulation(start):
 
         new = start.copy()
         for actor in start.actors:
-            print(actor)
             if local_optimum_counter < 1:
                 actor.construct_tree(start, counter)
             else:
@@ -27,7 +25,6 @@ def Simulation(start):
         start.children = new
 
         start = new
-        print(counter, start)
 
         counter += 1
 
@@ -41,3 +38,4 @@ def Simulation(start):
 
 
 New = Simulation(Start)
+
