@@ -84,7 +84,7 @@ def PathIntegral_to_csv(col, paths, name):
         string += 'config{}, '.format(i)
     string = string[:-2]
 
-    np.savetxt(fname='PathIntegralData/paths{}.csv'.format(name), X=paths, header=string, comments='', fmt="%d", delimiter=",")
+    np.savetxt(fname='Data/PathIntegralData/paths{}.csv'.format(name), X=paths, header=string, comments='', fmt="%d", delimiter=",")
 
 
 def move_up(config, start_config):
@@ -101,7 +101,7 @@ def move_up(config, start_config):
 
 def config_to_Json(start, name='config'):
 
-    with open('EvolutionData/{}.json'.format(name), 'w') as fp:
+    with open('Data/EvolutionData/{}.json'.format(name), 'w') as fp:
         json.dump(start, fp=fp, default=lambda x: x.toJson_part_two(), sort_keys=True, indent=4)
 
 

@@ -132,11 +132,11 @@ class System:
         filtered = self.actors[0].tree.filtered
 
         gains = np.array([config.gain.sum() for config in filtered])
-        np.savetxt('DegeneracyData/Total/gainhist.csv', gains, header='gains', comments='', fmt="%d", delimiter=",")
+        np.savetxt('Data/DegeneracyData/Total/gainhist.csv', gains, header='gains', comments='', fmt="%d", delimiter=",")
 
         for i, actor in self.actors:
             individual_gains = np.array([config.gain[i] for config in filtered])
-            np.savetxt('DegeneracyData/Individual/gainhist{}.csv'.format(actor.name), individual_gains, header='gains',
+            np.savetxt('Data/DegeneracyData/Individual/gainhist{}.csv'.format(actor.name), individual_gains, header='gains',
                        comments='', fmt="%d", delimiter=",")
 
         gain_dict = {}
@@ -148,7 +148,7 @@ class System:
             else:
                 gain_dict[gain] = [config.config.tolist()]
 
-        with open('DegeneracyData/Total/gainstoconfigs.json', 'w') as fp:
+        with open('Data/DegeneracyData/Total/gainstoconfigs.json', 'w') as fp:
             json.dump(gain_dict, fp=fp, sort_keys=True, indent=4)
 
         individual_gain_dict = {}
@@ -161,6 +161,6 @@ class System:
                 else:
                     individual_gain_dict[individual_gain] = [config.config.tolist()]
 
-            with open('DegeneracyData/Individual/gainstoconfigs{}.json'.format(actor.name), 'w') as fp:
+            with open('Data/DegeneracyData/Individual/gainstoconfigs{}.json'.format(actor.name), 'w') as fp:
                 json.dump(individual_gain_dict, fp=fp, sort_keys=True, indent=4)
 

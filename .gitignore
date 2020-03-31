@@ -4,7 +4,7 @@ __pycache__/
 .DS_Store
 /javascripts/
 /images/
-/DegeneracyData/
-/EvolutionData/
-/PathIntegralData/
-/TreeData/
+/Data/DegeneracyData/
+/Data/EvolutionData/
+/Data/PathIntegralData/
+/Data/TreeData/
