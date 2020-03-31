@@ -64,22 +64,28 @@ class Actor:
 
     def decide(self, start_config, new_config):
 
-        max_gain, max_index = path_integral(self)
+        max_gain, index = path_integral(self)
+
         if max_gain > self.highest:
             self.highest = max_gain
 
-        config = self.tree.layers[-1].flatten()[max_index]
+        config = self.tree.layers[-1].flatten()[index]
         branch = move_up(config, start_config)
 
         if self.highest == start_config.gain[self.index]:
             new_config[self.index] = start_config[self.index]
 
-        elif branch[self.index] == start_config[self.index]:
-            new_config[self.index] = start_config[self.index]
+        elif start_config.gain[self.index] == max_gain*-1:
+            chance = np.random.random()
+            if chance > 0.3:
+                new_config[self.index] = start_config[self.index]*-1
+            else:
+                new_config[self.index] = start_config[self.index]
 
         else:
             new_config[self.index] = branch[self.index]
 
+    # noinspection PyTypeChecker
     def print_energy_degeneracy(self):
 
         filtered = self.tree.filtered
@@ -117,6 +123,5 @@ class Actor:
 England = Actor('England', 0, -1)
 France = Actor('France', 1, -1)
 Spain = Actor('Spain', 2, -1)
-Prussia = Actor('Prussia', 3, -1)
 
 Actors = [England, France, Spain]
