@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 from Propensities import Propensities
 from Actor import Actors
 from System import System, Start
-from Loose import config_to_Json
+from Loose import write_evolution
 
 plt.style.use('fivethirtyeight')
 kleur = plt.rcParams['axes.prop_cycle'].by_key()['color']
@@ -15,14 +15,15 @@ def Simulation(start, actors):
     local_optimum_counter = 0
     counter = 0
 
-    while local_optimum_counter < 3:
-        new = System([0, 0, 0])
+    while local_optimum_counter < 10:
+
+        new = System(np.zeros(start.Dim))
         for actor in actors:
 
             actor.construct_tree(start, counter)
             actor.decide(start, new)
 
-        new.gain = new.hamiltonian(Propensities)
+        # new.gain = new.hamiltonian(Propensities)
 
         if new == start:
             local_optimum_counter += 1
@@ -36,16 +37,23 @@ def Simulation(start, actors):
 
         counter += 1
 
-    child = start
-    parent = child.parent
-    while parent is not None:
-        child = parent
-        parent = child.parent
-    config_to_Json(child)
+        if counter == 20:
+            local_optimum_counter = 11
+            print('unstable system')
 
+    print('stable configuration found')
+    write_evolution(start)
     return start
 
 
-New = Simulation(Start, Actors)
-
-print('done')
+# New = Simulation(Start, Actors)
+Test = System(np.ones(Start.Dim))
+print(Test, Test.gain)
+NewTest = Test.invert()
+print(NewTest, NewTest.gain)
+NewTest = NewTest.flip(0)
+print(NewTest, NewTest.gain)
+NewTest = NewTest.flip(Actors[0])
+print(NewTest, NewTest.gain)
+NewTest[0] = 1
+print(NewTest, NewTest.gain)
