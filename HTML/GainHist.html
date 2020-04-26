@@ -63,14 +63,12 @@
 
     }
 
-    d3.csv("DegeneracyData/Total/gainhist.csv", function(data) {
+    d3.csv("../Data/DegeneracyData/Total/gainhist.csv", function(data) {
 
         // X axis: scale and draw:
         const min = d3.min(data, function (d) { return +d.gains - 1 });
         const max = d3.max(data, function (d) { return +d.gains + 1 });
-        const x = d3.scaleLinear()
-            .domain([min, max])
-            .range([0, width]);
+        const x = d3.scaleLinear().domain([min, max]).range([0, width]);
 
         svg.append("g").attr("transform", "translate(0," + height + ")")
             .call(d3.axisBottom(x))
@@ -123,7 +121,7 @@
                        .style("fill", "#008fd4");
 
         let root;
-        fetch('DegeneracyData/Total/gainstoconfigs.json').then( async (treeData) => { treeData = await treeData.json();
+        fetch('../Data/DegeneracyData/Total/gainstoconfigs.json').then( async (treeData) => { treeData = await treeData.json();
 
             root = treeData;
 

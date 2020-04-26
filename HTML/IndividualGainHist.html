@@ -4,11 +4,10 @@
   <label for="mySelect">Choose an actor for whom you want to see the gain-degeneracy:</label>
 
   <select id="mySelect" onchange="execute(value)">
-      <option value="England" selected>Choose file</option>
-      <option value="England" >England</option>
-      <option value="France">France</option>
-      <option value="Spain">Spain</option>
-      <option value="USA">USA</option>
+      <option value="UK" selected>Choose file</option>
+      <option value="UK" >UK</option>
+      <option value="FR">FR</option>
+      <option value="US">US</option>
   </select>
 
 <!-- Load d3.js -->
@@ -95,9 +94,9 @@
                 .text("Individual gain");
 
             // set the parameters for the histogram
-            const histogram = d3.histogram().value(function (d) { return d.gains; })
+            const histogram = d3.histogram().value(function (d) {return d.gains; })
                                           .domain(x.domain())
-                                          .thresholds(x.ticks(max - min)); // then the numbers of bins
+                                          .thresholds(x.ticks(max-min)); // then the numbers of bins
 
             // And apply this function to data to get the bins
             const bins = histogram(data);
@@ -126,7 +125,7 @@
                            .enter()
                            .append("rect")
                            .attr("x", -10)
-                           .attr("transform", function (d) { return "translate(" + x(d.x0) + "," + y(d.length) + ")"; })
+                           .attr("transform", function (d) { if (d.length !== 0) {return "translate(" + x(d[0].gains) + "," + y(d.length) + ")";}})
                            .attr("width", 20)
                            .attr("height", function (d) { return height - y(d.length); })
                            .style("fill", "#008fd4");
@@ -139,12 +138,11 @@
 
             });
 
-            rects.on("mouseover", function (d) { const currentBar = d3.select(this);
-                                                     currentBar.style('fill', '#fc4f30');
-                                                 const config_list = root[String(d.x0) + ".0"];
+            rects.on("mouseover", function (d) { const currentBar = d3.select(this); currentBar.style('fill', '#fc4f30');
+                                                 const config_list = root[String(d[0].gains)];
 
                                                  clear_configs(svg_1);
-                                                 show_configs(svg_1, d.x0, config_list);
+                                                 show_configs(svg_1, d[0].gains, config_list);
 
                                                 });
 

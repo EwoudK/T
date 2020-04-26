@@ -1,4 +1,5 @@
 import json
+import os
 
 
 class Tree:
@@ -18,5 +19,9 @@ class Tree:
 
     def toJson(self, name, counter):
 
+        new_path = r'Data/TreeData/{}/'.format(name)
+        if not os.path.exists(new_path):
+            os.makedirs(new_path)
+
         with open('Data/TreeData/{}/Tree{}.json'.format(name, counter), 'w') as fp:
-            json.dump(self.start, fp=fp, default=lambda x: x.toJson(), sort_keys=True, indent=4)
+            json.dump(self.start, fp=fp, default=lambda x: x.toJson(tree=True), sort_keys=True, indent=4)

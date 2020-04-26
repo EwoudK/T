@@ -1,166 +1,98 @@
 import numpy as np
-import json
+from itertools import permutations
 
 
 class System:
 
-    def __init__(self, config, actors):
+    def __init__(self, actors, spinvalues, Hamiltonian_to_use='B'):
 
-        if type(config) == list:
-            self.config = np.array(config)
-        elif type(config) == np.ndarray:
-            self.config = config
-
-        self.Dim = self.config.size
         self.actors = actors
+        self.spinvalues = spinvalues
+        self.Dim = self.actors.size
+        self.H = Hamiltonian_to_use
+
+        self.benefits = self.Hamiltonian()
 
         self.parent = None
         self.children = None
 
-        self.gain = self.hamiltonian()
-
     def __repr__(self):
 
-        temp = str(self.config)
+        temp = str(self.spinvalues)
         return temp
 
     def __getitem__(self, key):
 
-        return self.config[key]
+        return self.spinvalues[key]
 
     def __setitem__(self, key, value):
 
-        self.config[key] = value
-        self.gain = self.hamiltonian()
-
-    def __mul__(self, other):
-
-        temp_config_array = np.copy(self.config)
-        temp_config_array *= other
-
-        temp_system = System(temp_config_array, self.actors)
-        return temp_system
-
-    def __rmul__(self, other):
-
-        temp_config_array = np.copy(self.config)
-        temp_config_array *= other
-
-        temp_system = System(temp_config_array, self.actors)
-        return temp_system
+        self.spinvalues[key] = value
+        self.benefits = self.Hamiltonian()
 
     def __eq__(self, other):
 
-        return np.array_equal(self.config, other.config)
+        return np.array_equal(self.spinvalues, other.spinvalues)
 
-    def __hash__(self):
-        return hash(self.config.tostring())
+    def Hamiltonian(self):
+
+        H = np.zeros(self.Dim)
+        indices = [x for x in range(0, self.Dim)]
+        for index1, index2 in permutations(indices, 2):
+
+            actor1 = self.actors[index1]
+            actor2 = self.actors[index2]
+
+            spin1 = self.spinvalues[index1]
+            spin2 = self.spinvalues[index2]
+
+            propensity = actor1.propensities[index2]
+
+            if self.H == 'B':
+
+                H[index1] += 0.5*(spin1*spin2)*propensity
+
+            elif self.H == 'G':
+
+                gpropensity = actor1.gpropensities[index2]
+                H[index1] += 0.5*(spin1*spin2)*(propensity + actor1.belonging*actor2.belonging*gpropensity)
+
+            elif self.H == 'V':
+                gpropensities = actor1.gpropensities[:, index2]
+                gbenefit = np.einsum('i,i,i->', actor1.belonging, actor2.belonging, gpropensities)
+                H[index1] += 0.5*(spin1*spin2)*(propensity + gbenefit)
+
+        return H
 
     def copy(self):
-        temp_config = np.copy(self.config)
-        temp = System(temp_config, self.actors)
-        return temp
 
-    def evolute(self, other):
-        other = np.copy(other)
-        temp = System(other, self.actors)
+        temp_spins = np.copy(self.spinvalues)
+        new = System(self.actors, temp_spins, self.H)
+        return new
 
-        return temp
+    def flip(self, index):
 
-    def invert(self):
+        temp_spins = np.copy(self.spinvalues)
+        temp_spins[index] *= -1
+        new = System(self.actors, temp_spins, self.H)
+        return new
 
-        temp = self*-1
-
-        new_config = temp
-
-        return new_config
-
-    def flip(self, actor):
-
-        temp_config_array = np.copy(self.config)
-        temp_system = System(temp_config_array, self.actors)
-        index = self.actors.index(actor)
-
-        temp_system[index] *= -1
-
-        return temp_system
-
-    def hamiltonian(self):
-
-        h = np.zeros(self.Dim)
-        for i, actor in enumerate(self.actors):
-            temp = 0
-            for j, other in enumerate(self.actors):
-                if i != j:
-                    temp += 0.5*(self[i]*self[j])*(actor.propensities[j] + actor.belonging*other.belonging*10)
-
-            h[i] = temp
-
-        return h
-
-    def toJson(self):
+    def toJson(self, tree=False):
         if self.children is None:
             return {
-                'config': self.config.tolist(),
-                'gain': self.gain.tolist()
+                'config': self.spinvalues.tolist(),
+                'gain': self.benefits.tolist()
                     }
-        else:
+        elif tree:
             return {
-                'children': [child.toJson() for child in self.children],
-                'config': self.config.tolist(),
-                'gain': self.gain.tolist()
+                'children': [child.toJson(tree=True) for child in self.children],
+                'config': self.spinvalues.tolist(),
+                'gain': self.benefits.tolist()
             }
 
-    def toJson_part_two(self):
-
-        if self.children is None:
-            return {
-                'config': self.config.tolist(),
-                'gain': self.gain.tolist()
-                    }
         else:
-
             return {
-                'children': [self.children.toJson_part_two()],
-                'config': self.config.tolist(),
-                'gain': self.gain.tolist()
+                'children': [self.children.toJson()],
+                'config': self.spinvalues.tolist(),
+                'gain': self.benefits.tolist()
             }
-
-    # noinspection PyTypeChecker
-    def print_energy_degeneracy(self):
-
-        filtered = self.actors[0].tree.filtered
-
-        gains = np.array([config.gain.sum() for config in filtered])
-        np.savetxt('Data/DegeneracyData/Total/gainhist.csv', gains, header='gains', comments='', fmt="%d", delimiter=",")
-
-        for i, actor in self.actors:
-            individual_gains = np.array([config.gain[i] for config in filtered])
-            np.savetxt('Data/DegeneracyData/Individual/gainhist{}.csv'.format(actor.name), individual_gains, header='gains',
-                       comments='', fmt="%d", delimiter=",")
-
-        gain_dict = {}
-        for config in filtered:
-            gain = config.gain.sum()
-
-            if gain in gain_dict:
-                gain_dict[gain].append(config.config.tolist())
-            else:
-                gain_dict[gain] = [config.config.tolist()]
-
-        with open('Data/DegeneracyData/Total/gainstoconfigs.json', 'w') as fp:
-            json.dump(gain_dict, fp=fp, sort_keys=True, indent=4)
-
-        individual_gain_dict = {}
-        for i, actor in self.actors:
-            for config in filtered:
-                individual_gain = config.gain[i]
-
-                if individual_gain in individual_gain_dict:
-                    individual_gain_dict[individual_gain].append(config.config.tolist())
-                else:
-                    individual_gain_dict[individual_gain] = [config.config.tolist()]
-
-            with open('Data/DegeneracyData/Individual/gainstoconfigs{}.json'.format(actor.name), 'w') as fp:
-                json.dump(individual_gain_dict, fp=fp, sort_keys=True, indent=4)
-

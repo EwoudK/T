@@ -1,11 +1,23 @@
+import json
 import numpy as np
-from System import System
 from Actor import Actor
+from Loose import sort
 
-One = Actor('USA', 0,     [0, 1, 1], belonging=1)
-Two = Actor('UK', 0,      [1, 0, 1], belonging=-1)
-Three = Actor('France', 0, [1, 1, 0], belonging=-1)
+temp_array = []
+with open('StartValues-4.json') as f:
+    data = json.load(f)
 
-Actors = [One, Two, Three]
+NAMES = data['Actors'].keys()
+for NAME in NAMES:
+    RAT, BEL, PROP, GPROP = data['Actors'][NAME].values()
 
-Start = System(np.ones(len(Actors)), Actors)
+    if type(BEL) is list:
+        BEL = np.array(BEL)
+        GPROP = np.array(GPROP)
+
+    temp_actor = Actor(NAME, RAT, BEL, PROP, GPROP)
+    temp_array.append(temp_actor)
+
+temp_array.sort(key=sort, reverse=True)
+Actors = np.array(temp_array)
+SpinValues = np.ones(len(Actors))
