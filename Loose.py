@@ -77,7 +77,7 @@ def chronological_update(new):
         actor.decide(target, index, new)
 
 
-def chronological_update_E(to_consider, extended_actor):
+def Extended_Rationality(to_consider, extended_actor):
 
     temp_configs = [to_consider]
     new_temp = [to_consider]

@@ -1,6 +1,6 @@
 import Tree
 import numpy as np
-from Loose import chronological_update_E, move_up
+from Loose import Extended_Rationality, move_up
 
 
 class Actor:
@@ -58,7 +58,7 @@ class Actor:
                     new_children = []
                     for child in temp:
                         config_to_consider = child.copy()
-                        new_configs = chronological_update_E(config_to_consider, self)
+                        new_configs = Extended_Rationality(config_to_consider, self)
 
                         child.children = new_configs
                         for config in new_configs:
