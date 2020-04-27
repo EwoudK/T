@@ -1,6 +1,6 @@
 import Tree
 import numpy as np
-from Loose import Extended_Rationality, move_up
+from Loose import Evolve, move_up
 
 
 class Actor:
@@ -42,45 +42,110 @@ class Actor:
         elif self.rationality == -1:
 
             if flipped.benefits[index] == self.max:
-                print('immediate max')
+                print(self, 'immediate max')
                 target = flipped
                 return target
 
             elif no_change.benefits[index] == self.max:
-                print('immediate max')
+                print(self, 'immediate max')
                 target = no_change
                 return target
 
+            # else:
+            #     print(self, 'no immediate max')
+            #     configs_seen = []
+            #     target = None
+            #     while target is None:
+            #
+            #         if temp.size == 0:
+            #
+            #             if flipped.benefits[index] > no_change.benefits[index]:
+            #                 return flipped
+            #
+            #             else:
+            #                 return no_change
+            #
+            #         new_children = []
+            #         for child in temp:
+            #             partial_new_children = []
+            #
+            #             config_to_consider = child.copy()
+            #             new_configs = Extended_Rationality(config_to_consider, self)
+            #
+            #             for config in new_configs:
+            #                 if config.benefits[index] == self.max:
+            #                     print('max found')
+            #                     print(config)
+            #                     target = move_up(config)
+            #
+            #                 elif config in configs_seen:
+            #                     print('already seen')
+            #                     config_flipped = config.flip(index)
+            #                     config.parent = child
+            #
+            #                     partial_new_children.append(config)
+            #                     partial_new_children.append(config_flipped)
+            #                     pass
+            #
+            #                 else:
+            #                     configs_seen.append(config)
+            #
+            #                     config.parent = child
+            #
+            #                     new_children.append(config)
+            #                     partial_new_children.append(config)
+            #
+            #                     config_flipped = config.flip(index)
+            #                     config_flipped.parent = child
+            #
+            #                     new_children.append(config_flipped)
+            #                     partial_new_children.append(config_flipped)
+            #
+            #             child.children = np.array(partial_new_children)
+            #
+            #         new_children_array = np.array(new_children)
+            #         temp = new_children_array
+            #
+            #     return target
             else:
-                print('no immediate max')
+                print(self, 'no immediate max')
+                seen = []
+                configs_to_consider = [tree_start]
+
                 target = None
                 while target is None:
-                    new_children = []
-                    for child in temp:
-                        config_to_consider = child.copy()
-                        new_configs = Extended_Rationality(config_to_consider, self)
+                    new_to_consider = []
 
-                        child.children = new_configs
-                        for config in new_configs:
-                            config.parent = child
-                            if config.benefits[index] > self.max:
-                                # == self.max:
-                                target = move_up(config)
-                            else:
-                                new_children.append(config)
+                    if len(configs_to_consider) == 0:
+                        # TODO
+                        # attaining maximal benefit is impossible
+                        # return highest immediate benefit
+                        target = flipped
 
-                    new_children_array = np.array(new_children)
+                    for config in configs_to_consider:
+                        if config not in seen:
 
-                    # if we do not do this check, an endless loop can form of a configuration that evolves into itself
-                    # thus no maximal benefit is found
-                    if (new_children_array == temp).all():
-                        if flipped.benefits[index] > no_change.benefits[index]:
-                            return flipped
+                            # returns array of possible new_configs config can transition into
+                            children = Evolve(config, self)
+
+                            # check if children contains config with max benefit
+                            # add children to [new_to_consider]
+                            prob = 0
+                            for child_config in children:
+                                if child_config.benefits[index] == self.max:
+                                    if child_config.prob[index] > prob:
+                                        prob = child_config.prob[index]
+                                        target = child_config
+                                else:
+                                    new_to_consider.append(child_config)
+
+                            # finally, put config and config_flipped in [seen]
+                            seen.append(config)
+
                         else:
-                            return no_change
+                            pass
 
-                    else:
-                        temp = new_children_array
+                    configs_to_consider[:] = new_to_consider[:]
 
                 return target
 
@@ -91,12 +156,20 @@ class Actor:
             flipped, no_change = target
 
             if flipped.benefits[index] > no_change.benefits[index]:
+                print(self, 'flips')
                 new[index] = flipped[index]
 
             elif flipped.benefits[index] == no_change.benefits[index]:
                 chance = np.random.random()
                 if chance >= 0.5:
+                    print(self, 'random flips')
                     new[index] = flipped[index]
+                else:
+                    print(self, 'does not random flip')
+
+            else:
+                print(self, 'does not flip')
 
         elif self.rationality == -1:
+            print(self, 'chooses coalition represented by: ', target[index])
             new[index] = target[index]
