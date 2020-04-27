@@ -66,10 +66,6 @@ def print_energy_degeneracy(system):
             json.dump(individual_gain_dict, fp=fp, sort_keys=True, indent=4)
 
 
-def sort(x):
-    return x.rationality
-
-
 def chronological_update(new):
 
     for index, actor in enumerate(new.actors):
@@ -77,29 +73,71 @@ def chronological_update(new):
         actor.decide(target, index, new)
 
 
-def Extended_Rationality(to_consider, extended_actor):
+def Evolve(config, extended_actor):
 
-    temp_configs = [to_consider]
-    new_temp = [to_consider]
+    index = np.where(config.actors == extended_actor)[0]
 
-    for index, actor in enumerate(to_consider.actors):
-        if actor != extended_actor:
-            for i, temp_config in enumerate(temp_configs):
-                flipped, no_change = temp_config.flip(index), temp_config.copy()
+    flipped, no_change = config.flip(index), config.copy()
 
-                if flipped.benefits[index] == no_change.benefits[index]:
-                    # print('degeneracy encountered')
-                    new_temp.append(flipped)
+    flipped.parent, no_change.parent = config, config
+    config.children = np.array([flipped, no_change])
 
-                elif flipped.benefits[index] > no_change.benefits[index]:
-                    # print(actor, 'flips it')
-                    new_temp.pop(i)
-                    new_temp.append(flipped)
+    to_consider = [flipped, no_change]
 
-            temp_configs[:] = new_temp[:]
+    for actor_index, actor in enumerate(config.actors):
+        if actor_index != index:
+            new_to_consider = []
 
-    temp_array = np.array(temp_configs)
-    return temp_array
+            for config_index, temp in enumerate(to_consider):
+                temp_flipped, temp_no_change = temp.flip(actor_index), temp.copy()
+
+                temp_flipped.prob[index], temp_no_change.prob[index] = temp.prob[index], temp.prob[index]
+                temp_flipped.parent, temp_no_change.parent = temp, temp
+
+                if temp_flipped.benefits[actor_index] == temp_no_change.benefits[actor_index]:
+                    new_to_consider.append(temp_flipped)
+                    temp_flipped.prob[index] *= 1/2
+
+                    new_to_consider.append(temp_no_change)
+                    temp_no_change.prob[index] *= 1/2
+
+                    temp.children = np.array([temp_flipped, temp_no_change])
+
+                elif temp_flipped.benefits[actor_index] > temp_no_change.benefits[actor_index]:
+                    new_to_consider.append(temp_flipped)
+                    t = np.array([temp_flipped])
+                    temp.children = t
+
+                else:
+                    new_to_consider.append(temp_no_change)
+                    temp.children = np.array([temp_no_change])
+
+            to_consider[:] = new_to_consider[:]
+
+    considered = np.array(to_consider)
+    return considered
+
+    # configs_to_consider = [first_to_consider]
+    # new_temp = [first_to_consider]
+    #
+    # for index, actor in enumerate(first_to_consider.actors):
+    #     if actor != extended_actor:
+    #         for i, temp_config in enumerate(temp_configs):
+    #             flipped, no_change = temp_config.flip(index), temp_config.copy()
+    #
+    #             if flipped.benefits[index] == no_change.benefits[index]:
+    #                 # print('degeneracy encountered')
+    #                 new_temp.append(flipped)
+    #
+    #             elif flipped.benefits[index] > no_change.benefits[index]:
+    #                 # print(actor, 'flips it')
+    #                 new_temp.pop(i)
+    #                 new_temp.append(flipped)
+    #
+    #         temp_configs[:] = new_temp[:]
+    #
+    # temp_array = np.array(temp_configs)
+    # return temp_array
 
 
 def Simulation(test, update='chronological'):
@@ -137,6 +175,6 @@ def Simulation(test, update='chronological'):
 
 def move_up(config):
 
-    while config.parent.parent is not None:
+    while config.parent is not None:
         config = config.parent
     return config
