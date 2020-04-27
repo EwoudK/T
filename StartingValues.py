@@ -3,7 +3,7 @@ import numpy as np
 from Actor import Actor
 
 temp_array = []
-with open('StartValues-4.json') as f:
+with open('StartValues-5.json') as f:
     data = json.load(f)
 
 NAMES = data['Actors'].keys()
