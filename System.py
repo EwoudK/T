@@ -12,6 +12,7 @@ class System:
         self.H = Hamiltonian_to_use
 
         self.benefits = self.Hamiltonian()
+        self.prob = np.ones(self.Dim)
 
         self.parent = None
         self.children = None
