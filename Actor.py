@@ -117,10 +117,13 @@ class Actor:
                     new_to_consider = []
 
                     if len(configs_to_consider) == 0:
-                        # TODO
                         # attaining maximal benefit is impossible
                         # return highest immediate benefit
-                        target = flipped
+                        if flipped.benefits[index] > no_change.benefits[index]:
+                            return flipped
+
+                        else:
+                            return no_change
 
                     for config in configs_to_consider:
                         if config not in seen:
