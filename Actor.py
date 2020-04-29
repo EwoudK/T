@@ -116,8 +116,9 @@ class Actor:
                 while target is None:
                     new_to_consider = []
 
+                    # attaining maximal benefit is impossible
                     if len(configs_to_consider) == 0:
-                        # attaining maximal benefit is impossible
+                        print('\tmax benefit not found')
                         # return highest immediate benefit
                         if flipped.benefits[index] > no_change.benefits[index]:
                             return flipped
@@ -136,6 +137,7 @@ class Actor:
                             prob = 0
                             for child_config in children:
                                 if child_config.benefits[index] == self.max:
+                                    print('\tmax found')
                                     if child_config.prob[index] > prob:
                                         prob = child_config.prob[index]
                                         target = child_config
@@ -174,5 +176,5 @@ class Actor:
                 print(self, 'does not flip')
 
         elif self.rationality == -1:
-            print(self, 'chooses coalition represented by: ', target[index])
+            print('\t{} chooses coalition represented by: {}'.format(self, target[index]))
             new[index] = target[index]
