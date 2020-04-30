@@ -117,28 +117,6 @@ def Evolve(config, extended_actor):
     considered = np.array(to_consider)
     return considered
 
-    # configs_to_consider = [first_to_consider]
-    # new_temp = [first_to_consider]
-    #
-    # for index, actor in enumerate(first_to_consider.actors):
-    #     if actor != extended_actor:
-    #         for i, temp_config in enumerate(temp_configs):
-    #             flipped, no_change = temp_config.flip(index), temp_config.copy()
-    #
-    #             if flipped.benefits[index] == no_change.benefits[index]:
-    #                 # print('degeneracy encountered')
-    #                 new_temp.append(flipped)
-    #
-    #             elif flipped.benefits[index] > no_change.benefits[index]:
-    #                 # print(actor, 'flips it')
-    #                 new_temp.pop(i)
-    #                 new_temp.append(flipped)
-    #
-    #         temp_configs[:] = new_temp[:]
-    #
-    # temp_array = np.array(temp_configs)
-    # return temp_array
-
 
 def Simulation(test, update='chronological'):
 
@@ -155,6 +133,8 @@ def Simulation(test, update='chronological'):
             break
 
         new = test.copy()
+        new.M = np.zeros(test.Dim)
+
         test.children = new
         new.parent = test
 
