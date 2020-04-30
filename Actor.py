@@ -177,14 +177,3 @@ class Actor:
         elif self.rationality == -1:
             print('\t{} chooses coalition represented by: {}'.format(self, target[index]))
             new[index] = target[index]
-
-            for i, actor in enumerate(new.actors):
-                if actor.rationality == 0:
-                    if self.propensities[i] > 0:
-                        strength = new.spinvalues[index]*10
-                        new.diplomacy(i, strength)
-                        print('diplomacy with ', actor)
-                    if self.propensities[i] < 0:
-                        strength = - new.spinvalues[index]*10
-                        new.diplomacy(i, strength)
-                        print('diplomacy with ', actor)

@@ -158,3 +158,13 @@ def move_up(config):
     while config.parent is not None:
         config = config.parent
     return config
+
+
+def go_nuclear(config, actor1, spinvalue1, actor2, index2):
+
+    prop = actor1.propensities[index2]
+    if actor2.rationality == 0:
+        sign = (prop*spinvalue1)/prop
+        strength = sign*10
+        config.diplomacy(index2, strength)
+        print('diplomacy with ', actor2)
