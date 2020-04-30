@@ -4,15 +4,24 @@ from itertools import permutations
 
 class System:
 
-    def __init__(self, actors, spinvalues, Hamiltonian_to_use='B'):
+    def __init__(self, actors, spinvalues, Hamiltonian_to_use='B', prob=None, M=None):
 
         self.actors = actors
         self.spinvalues = spinvalues
         self.Dim = self.actors.size
         self.H = Hamiltonian_to_use
 
+        if prob is None:
+            self.prob = np.ones(self.Dim)
+        else:
+            self.prob = prob
+
+        if M is None:
+            self.M = np.zeros(self.Dim)
+        else:
+            self.M = M
+
         self.benefits = self.Hamiltonian()
-        self.prob = np.ones(self.Dim)
 
         self.parent = None
         self.children = None
@@ -63,20 +72,32 @@ class System:
                 gbenefit = np.einsum('i,i,i->', actor1.belonging, actor2.belonging, gpropensities)
                 H[index1] += 0.5*(spin1*spin2)*(propensity + gbenefit)
 
+        H += np.einsum('i,i->i', self.spinvalues, self.M)
         return H
 
     def copy(self):
 
         temp_spins = np.copy(self.spinvalues)
-        new = System(self.actors, temp_spins, self.H)
+        temp_prob = np.copy(self.prob)
+        temp_M = np.copy(self.M)
+
+        new = System(self.actors, temp_spins, self.H, temp_prob, temp_M)
         return new
 
     def flip(self, index):
 
         temp_spins = np.copy(self.spinvalues)
+        temp_prob = np.copy(self.prob)
+        temp_M = np.copy(self.M)
+
         temp_spins[index] *= -1
-        new = System(self.actors, temp_spins, self.H)
+        new = System(self.actors, temp_spins, self.H, temp_prob, temp_M)
         return new
+
+    def diplomacy(self, index, strength):
+
+        self.M[index] += strength
+        self.benefits = self.Hamiltonian()
 
     def toJson(self, tree=False):
         if self.children is None:
