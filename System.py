@@ -4,12 +4,13 @@ from itertools import permutations
 
 class System:
 
-    def __init__(self, actors, spinvalues, Hamiltonian_to_use='B', prob=None, M=None):
+    def __init__(self, actors, spinvalues, Hamiltonian_to_use='B', prob=None, M=None, prefactor=1):
 
         self.actors = actors
         self.spinvalues = spinvalues
         self.Dim = self.actors.size
         self.H = Hamiltonian_to_use
+        self.prefactor = prefactor
 
         if prob is None:
             self.prob = np.ones(self.Dim)
@@ -64,12 +65,12 @@ class System:
 
             elif self.H == 'G':
 
-                gpropensity = actor1.gpropensities[index2]
+                gpropensity = self.prefactor*actor1.gpropensities[index2]
                 H[index1] += 0.5*(spin1*spin2)*(propensity + actor1.belonging*actor2.belonging*gpropensity)
 
             elif self.H == 'V':
                 gpropensities = actor1.gpropensities[:, index2]
-                gbenefit = np.einsum('i,i,i->', actor1.belonging, actor2.belonging, gpropensities)
+                gbenefit = self.prefactor*np.einsum('i,i,i->', actor1.belonging, actor2.belonging, gpropensities)
                 H[index1] += 0.5*(spin1*spin2)*(propensity + gbenefit)
 
         H += np.einsum('i,i->i', self.spinvalues, self.M)
@@ -80,8 +81,9 @@ class System:
         temp_spins = np.copy(self.spinvalues)
         temp_prob = np.copy(self.prob)
         temp_M = np.copy(self.M)
+        temp_prefactor = self.prefactor
 
-        new = System(self.actors, temp_spins, self.H, temp_prob, temp_M)
+        new = System(self.actors, temp_spins, self.H, temp_prob, temp_M, temp_prefactor)
         return new
 
     def flip(self, index):
@@ -89,9 +91,10 @@ class System:
         temp_spins = np.copy(self.spinvalues)
         temp_prob = np.copy(self.prob)
         temp_M = np.copy(self.M)
+        temp_prefactor = self.prefactor
 
         temp_spins[index] *= -1
-        new = System(self.actors, temp_spins, self.H, temp_prob, temp_M)
+        new = System(self.actors, temp_spins, self.H, temp_prob, temp_M, temp_prefactor)
         return new
 
     def diplomacy(self, index, strength):
