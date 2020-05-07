@@ -3,7 +3,7 @@ import numpy as np
 from Actor import Actor
 
 temp_array = []
-with open('4-cycle_degenerate.json') as f:
+with open('5-cycle.json') as f:
     data = json.load(f)
 
 NAMES = data['Actors'].keys()
