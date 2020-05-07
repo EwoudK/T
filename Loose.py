@@ -118,7 +118,7 @@ def Evolve(config, extended_actor):
     return considered
 
 
-def Simulation(test, update='chronological'):
+def Simulation(test, update='chronological', prefactor_function=None):
 
     Counter = 0
     Local_optimum = 0
@@ -132,8 +132,14 @@ def Simulation(test, update='chronological'):
             print('no stable configuration found')
             break
 
+        if prefactor_function is not None:
+            prefactor = prefactor_function(Counter-5, 1)
+        else:
+            prefactor = 1
+
         new = test.copy()
         new.M = np.zeros(test.Dim)
+        new.prefactor = prefactor
 
         test.children = new
         new.parent = test
