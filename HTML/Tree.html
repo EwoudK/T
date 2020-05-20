@@ -31,15 +31,15 @@
 
 </head>
 
-<body>
+<!--<label for="mySelect">Choose an actor:</label>
 
-<label for="mySelect">Choose an actor:</label>
 
-<select id="mySelect" onchange="update_data()">
+
+<select id="mySelect" onchange="update_data(value)">
     <option value="" selected>Choose actor</option>
 
-    <option value="../Data/TreeData/US/Tree0.json" >USA, Step 1</option>
-    <option value="../Data/TreeData/Russia/Tree0.json" >Russia, Step 1</option>
+    <option value="../Data/TreeData/GR/Tree0.json" >GR, Step 1</option>
+    <option value="../Data/TreeData/RU/Tree0.json" >Russia, Step 1</option>
     <option value="../Data/TreeData/UK/Tree0.json" >UK, Step 1</option>
     <option value="../Data/TreeData/FR/Tree0.json" >France, Step 1</option>
 
@@ -48,12 +48,13 @@
     <option value="../Data/TreeData/UK/Tree3.json" >USA, Step 4</option>
 
 
-</select>
+</select> -->
 
 <p id="hover">Gain.</p>
 
 <!-- load the d3.js library -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.min.js"></script>
+
 
 <script>
 
@@ -76,8 +77,8 @@
           .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
 
-  function update_data() {
-  const datafile = document.getElementById("mySelect").value;
+  function update_data(datafile) {
+  //const datafile = document.getElementById("mySelect").value;
   fetch(datafile).then(
           async (treeData) => {
             treeData = await treeData.json();
@@ -190,6 +191,8 @@
     }
     update(d);
   }
+
+  update_data("../Data/TreeData/GR/Tree0.json")
 
 </script>
 
