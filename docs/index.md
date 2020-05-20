@@ -20,3 +20,5 @@ Blue equals a spin of -1 while Red equals a spin of +1.
 <a href="EvolutionData/Evolution.html">Evolution of the system</a>
 
 <a href="TreeData/Tree.html">Decision Tree</a>
+
+test
